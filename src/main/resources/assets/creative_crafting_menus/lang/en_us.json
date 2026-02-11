@@ -1,7 +1,10 @@
 {
+  "container.creative_crafting_menus.crafting": "Crafting",
+  "container.creative_crafting_menus.smithing": "Smithing",
   "container.creative_crafting_menus.smithing.trim_pattern": "Trim Pattern",
   "container.creative_crafting_menus.smithing.trim_material": "Trim Material",
   "container.creative_crafting_menus.smithing.item_material": "Item Material",
+  "container.creative_crafting_menus.loom": "Loom",
   "container.creative_crafting_menus.loom.pattern": "Pattern",
   "container.creative_crafting_menus.loom.layers": "Layers",
   "container.creative_crafting_menus.loom.presets": "Presets",
@@ -16,6 +19,7 @@
   "container.creative_crafting_menus.loom.new_preset_group": "New Preset Group",
   "container.creative_crafting_menus.loom.built_in_presets": "Built-in",
   "container.creative_crafting_menus.loom.user_presets": "User",
+  "container.creative_crafting_menus.anvil": "Anvil",
   "container.creative_crafting_menus.anvil.name_lore": "Name & Lore",
   "container.creative_crafting_menus.anvil.name_lore.help.1": "Allows usage of markdown/markup text",
   "container.creative_crafting_menus.anvil.name_lore.help.2": "formatting with Text Placeholder API",

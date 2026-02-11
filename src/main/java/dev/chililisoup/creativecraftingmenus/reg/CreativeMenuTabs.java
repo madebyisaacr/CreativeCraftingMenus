@@ -21,26 +21,22 @@ public class CreativeMenuTabs {
         MENU_TABS = List.of(
                 register(
                         AnvilMenuTab::new,
-                        "anvil_menu",
-                        "block.minecraft.anvil",
+                        "anvil",
                         Items.ANVIL::getDefaultInstance
                 ),
                 register(
                         CraftingMenuTab::new,
-                        "crafting_menu",
-                        "container.crafting",
+                        "crafting",
                         Items.CRAFTING_TABLE::getDefaultInstance
                 ),
                 register(
                         LoomMenuTab::new,
-                        "loom_menu",
-                        "container.loom",
+                        "loom",
                         Items.LOOM::getDefaultInstance
                 ),
                 register(
                         SmithingMenuTab::new,
-                        "smithing_menu",
-                        "block.minecraft.smithing_table",
+                        "smithing",
                         Items.SMITHING_TABLE::getDefaultInstance
                 )
         );
@@ -49,15 +45,14 @@ public class CreativeMenuTabs {
     private static<M extends CreativeMenuTab.CreativeTabMenu<M>, T extends CreativeMenuTab<M>> T register(
             CreativeMenuTab.MenuTabConstructor<M, T> constructor,
             String name,
-            String translationKey,
             Supplier<ItemStack> iconGenerator
     ) {
         Identifier id = CreativeCraftingMenus.id(name);
 
         T menuTab = new CreativeMenuTab.Builder<>(constructor)
-                .title(Component.translatable(translationKey))
+                .title(Component.translatable("container.creative_crafting_menus." + name))
                 .backgroundTexture(CreativeCraftingMenus.id(
-                        String.format("textures/gui/container/creative_%s.png", name)
+                        String.format("textures/gui/container/creative_%s_menu.png", name)
                 ))
                 .icon(iconGenerator)
                 .id(id.toString())
