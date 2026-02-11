@@ -111,7 +111,7 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
         for (int i = 0; i < Page.values().length; i++) {
             Page page = Page.values()[i];
             int x = screen.leftPos + 33;
-            int y = screen.topPos + 14 + i * 20;
+            int y = screen.topPos + 13 + i * 20;
             boolean selected = page == this.selectedPage;
 
             boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + 16 && mouseY < y + 18;
@@ -357,7 +357,7 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
             if (page == this.selectedPage) continue;
 
             int x = this.screen.leftPos + 33;
-            int y = this.screen.topPos + 14 + i * 20;
+            int y = this.screen.topPos + 13 + i * 20;
             if (mouseX >= x && mouseY >= y && mouseX < x + 16 && mouseY < y + 18)
                 return page;
         }
