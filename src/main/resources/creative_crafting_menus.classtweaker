@@ -29,3 +29,13 @@ accessible field net/minecraft/client/gui/screens/inventory/StonecutterScreen SC
 accessible field net/minecraft/client/gui/screens/inventory/LoomScreen SCROLLER_SPRITE Lnet/minecraft/resources/Identifier;
 accessible field net/minecraft/client/gui/screens/inventory/LoomScreen SCROLLER_DISABLED_SPRITE Lnet/minecraft/resources/Identifier;
 accessible method net/minecraft/client/gui/components/EditBox isEditable ()Z
+accessible method net/minecraft/client/gui/components/MultiLineEditBox <init> (Lnet/minecraft/client/gui/Font;IIIILnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/Component;IZIZZ)V
+accessible field net/minecraft/client/gui/components/AbstractScrollArea scrolling Z
+accessible field net/minecraft/network/chat/Style bold Ljava/lang/Boolean;
+accessible field net/minecraft/network/chat/Style italic Ljava/lang/Boolean;
+accessible field net/minecraft/network/chat/Style underlined Ljava/lang/Boolean;
+accessible field net/minecraft/network/chat/Style strikethrough Ljava/lang/Boolean;
+accessible field net/minecraft/network/chat/Style obfuscated Ljava/lang/Boolean;
+accessible field net/minecraft/network/chat/Style font Lnet/minecraft/network/chat/FontDescription;
+accessible method net/minecraft/world/item/component/ResolvableProfile unpack ()Lcom/mojang/datafixers/util/Either;
+accessible class net/minecraft/world/item/component/ResolvableProfile$Partial

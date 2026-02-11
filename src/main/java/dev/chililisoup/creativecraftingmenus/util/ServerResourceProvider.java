@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
-public class ServerResourceProvider {
+public final class ServerResourceProvider {
     private static final CompletableFuture<Unit> DATA_RELOAD_INITIAL_TASK = CompletableFuture.completedFuture(Unit.INSTANCE);
     private static @Nullable RecipeManager RECIPE_MANAGER;
     private static boolean RECIPE_LOAD_ATTEMPTED;

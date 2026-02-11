@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class MenuHelper {
+public final class MenuHelper {
     public static SimpleContainer simpleContainer(AbstractContainerMenu menu, int size) {
         return new SimpleContainer(size) {
             @Override

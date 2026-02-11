@@ -85,7 +85,7 @@ public abstract class CreativeMenuTab<M extends CreativeMenuTab.CreativeTabMenu<
         return false;
     }
 
-    public boolean mouseScrolled(double distance) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         return false;
     }
 

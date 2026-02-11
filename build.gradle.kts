@@ -76,11 +76,16 @@ configurations.configureEach {
 
 dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
-    mappings(loom.officialMojangMappings())
+    @Suppress("UnstableApiUsage")
+    mappings(loom.layered {
+        officialMojangMappings()
+        prop("deps.parchment") { parchment("org.parchmentmc.data:parchment-${minecraft}:${it}@zip") }
+    })
 
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
     modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}-fabric")
+    modImplementation("eu.pb4:placeholder-api:${property("deps.placeholder_api")}")
 
     modCompileOnly("com.terraformersmc:modmenu:${property("deps.modmenu")}")
 }

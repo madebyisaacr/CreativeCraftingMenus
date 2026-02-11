@@ -16,6 +16,12 @@
   "container.creative_crafting_menus.loom.new_preset_group": "New Preset Group",
   "container.creative_crafting_menus.loom.built_in_presets": "Built-in",
   "container.creative_crafting_menus.loom.user_presets": "User",
+  "container.creative_crafting_menus.anvil.name_lore": "Name & Lore",
+  "container.creative_crafting_menus.anvil.name_lore.help.1": "Allows usage of markdown/markup text",
+  "container.creative_crafting_menus.anvil.name_lore.help.2": "formatting with Text Placeholder API",
+  "container.creative_crafting_menus.anvil.enchantments": "Enchantments",
+  "container.creative_crafting_menus.anvil.add_enchantment": "Add Enchantment",
+  "container.creative_crafting_menus.anvil.remove_enchantment": "Remove Enchantment",
 
   "creative_crafting_menus.config": "Creative Crafting Menus Config",
   "creative_crafting_menus.config.inventoryCraftingGrid": "Inventory Crafting Grid",

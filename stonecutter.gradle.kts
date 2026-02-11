@@ -11,7 +11,9 @@ allprojects {
         mavenCentral()
         mavenLocal()
         maven("https://maven.fabricmc.net/")
+        maven("https://maven.parchmentmc.org")
         maven("https://maven.isxander.dev/releases")
         maven("https://maven.terraformersmc.com/")
+        maven("https://maven.nucleoid.xyz/")
     }
 }

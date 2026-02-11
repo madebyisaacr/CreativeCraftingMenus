@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.config.BannerPresets;
 import dev.chililisoup.creativecraftingmenus.config.ModConfig;
-import dev.chililisoup.creativecraftingmenus.util.MenuHelper;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -672,7 +671,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
             for (int i = instance.startIndex; i < groups.size() && i < 4 + instance.startIndex; i++) {
                 int y = top + (i - instance.startIndex) * 14;
-                var group = groups.get(i);
+                Map.@Nullable Entry<String, BannerPresets.PresetGroupItem> group = groups.get(i);
 
                 if (mouseX >= left && mouseY >= y && mouseX < left + 56 && mouseY < y + 14)
                     return () -> {
@@ -915,10 +914,10 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
     }
 
     @Override
-    public boolean mouseScrolled(double distance) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (this.isScrollBarActive()) {
             int offscreenRows = this.getOffscreenRows();
-            float deltaY = (float) distance / offscreenRows;
+            float deltaY = (float) scrollY / offscreenRows;
             this.scrollOffs = Mth.clamp(this.scrollOffs - deltaY, 0F, 1F);
             this.startIndex = (int) (this.scrollOffs * offscreenRows + 0.5) * this.selectedPage.getColumns.apply(this);
         }
@@ -1086,7 +1085,6 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
                 }
             });
 
-            this.addSlot(MenuHelper.resultSlot(this, this.resultSlots, 0, 168, 57));
             this.resultSlots.setItem(0, Items.WHITE_BANNER.getDefaultInstance());
         }
 

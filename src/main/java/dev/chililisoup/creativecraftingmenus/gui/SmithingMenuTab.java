@@ -85,10 +85,10 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         this.armorStandPreview.entityType = EntityType.ARMOR_STAND;
         this.armorStandPreview.showBasePlate = false;
         this.armorStandPreview.showArms = true;
-        this.armorStandPreview.xRot = 25.0F;
-        this.armorStandPreview.bodyRot = 210.0F;
-        this.armorStandPreview.elytraRotX = Mth.PI / 12.0F;
-        this.armorStandPreview.elytraRotY = 0.0F;
+        this.armorStandPreview.xRot = 25F;
+        this.armorStandPreview.bodyRot = 210F;
+        this.armorStandPreview.elytraRotX = Mth.PI / 12F;
+        this.armorStandPreview.elytraRotY = 0F;
         this.armorStandPreview.elytraRotZ = -this.armorStandPreview.elytraRotX;
     }
 
@@ -145,7 +145,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
 
         guiGraphics.submitEntityRenderState(
                 this.armorStandPreview,
-                30.0F,
+                30F,
                 ARMOR_STAND_TRANSLATION, ARMOR_STAND_ANGLE,
                 null,
                 screen.leftPos + screen.imageWidth - 60,
@@ -182,7 +182,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
 
     private void renderScrollBar(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int x = screen.leftPos + 118;
-        int y = screen.topPos + 16 + (int) (39.0F * this.scrollOffs);
+        int y = screen.topPos + 16 + (int) (39F * this.scrollOffs);
 
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
@@ -394,7 +394,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         if (page != null) {
             this.selectedPage = page;
             this.pageContents = this.selectedPage.contentsSupplier.apply(this);
-            this.scrollOffs = 0.0F;
+            this.scrollOffs = 0F;
             this.startIndex = 0;
             return true;
         }
@@ -423,18 +423,18 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
 
         int top = this.screen.topPos + 16;
         int bottom = top + 54;
-        this.scrollOffs = ((float) mouseButtonEvent.y() - top - 7.5F) / (bottom - top - 15.0F);
-        this.scrollOffs = Mth.clamp(this.scrollOffs, 0.0F, 1.0F);
+        this.scrollOffs = ((float) mouseButtonEvent.y() - top - 7.5F) / (bottom - top - 15F);
+        this.scrollOffs = Mth.clamp(this.scrollOffs, 0F, 1F);
         this.startIndex = (int) (this.scrollOffs * this.getOffscreenRows() + 0.5) * 4;
         return true;
     }
 
     @Override
-    public boolean mouseScrolled(double distance) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (this.isScrollBarActive()) {
             int offscreenRows = this.getOffscreenRows();
-            float deltaY = (float) distance / offscreenRows;
-            this.scrollOffs = Mth.clamp(this.scrollOffs - deltaY, 0.0F, 1.0F);
+            float deltaY = (float) scrollY / offscreenRows;
+            this.scrollOffs = Mth.clamp(this.scrollOffs - deltaY, 0F, 1F);
             this.startIndex = (int) (this.scrollOffs * offscreenRows + 0.5) * 4;
         }
 
@@ -446,7 +446,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         this.updateItem(ItemStack.EMPTY);
         this.selectedPage = Page.TRIM_PATTERN;
         this.pageContents = List.of();
-        this.scrollOffs = 0.0F;
+        this.scrollOffs = 0F;
         this.startIndex = 0;
         super.remove();
     }
@@ -457,7 +457,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         this.trimMaterials.clear();
         this.selectedPage = Page.TRIM_PATTERN;
         this.pageContents = List.of();
-        this.scrollOffs = 0.0F;
+        this.scrollOffs = 0F;
         this.startIndex = 0;
         super.dispose();
     }
@@ -472,7 +472,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         this.armorStandPreview.chestEquipment = ItemStack.EMPTY;
         this.armorStandPreview.legsEquipment = ItemStack.EMPTY;
         this.armorStandPreview.feetEquipment = ItemStack.EMPTY;
-        this.armorStandPreview.bodyRot = itemStack.has(DataComponents.GLIDER) ? 30.0F : 210.0F;
+        this.armorStandPreview.bodyRot = itemStack.has(DataComponents.GLIDER) ? 30F : 210F;
         if (itemStack.isEmpty()) return;
 
         Equippable equippable = itemStack.get(DataComponents.EQUIPPABLE);

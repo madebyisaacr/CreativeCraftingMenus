@@ -263,14 +263,15 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             cir.setReturnValue(super.charTyped(characterEvent));
     }
 
-    @Inject(
-            method = "mouseClicked", at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/item/CreativeModeTabs;tabs()Ljava/util/List;"),
-            cancellable = true
-    )
+    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private static void menuTabMouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl, CallbackInfoReturnable<Boolean> cir) {
         if (selectedTab instanceof CreativeMenuTab<?> menuTab && menuTab.mouseClicked(mouseButtonEvent))
+            cir.setReturnValue(true);
+    }
+
+    @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
+    private void menuTabMouseReleased(MouseButtonEvent mouseButtonEvent, CallbackInfoReturnable<Boolean> cir) {
+        if (selectedTab instanceof CreativeMenuTab<?> menuTab && menuTab.mouseReleased(mouseButtonEvent))
             cir.setReturnValue(true);
     }
 
@@ -280,15 +281,12 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             target = "Lnet/minecraft/world/item/CreativeModeTabs;tabs()Ljava/util/List;"),
             cancellable = true
     )
-    private void menuTabMouseReleased(
+    private void checkTabReleased(
             MouseButtonEvent mouseButtonEvent,
             CallbackInfoReturnable<Boolean> cir,
             @Local(ordinal = 0) double x,
             @Local(ordinal = 1) double y
     ) {
-        if (selectedTab instanceof CreativeMenuTab<?> menuTab && menuTab.mouseReleased(mouseButtonEvent))
-            cir.setReturnValue(true);
-
         for (CreativeMenuTab<?> menuTab : CreativeMenuTabs.MENU_TABS.stream().filter(CreativeMenuTab::shouldDisplay).toList()) {
             if (this.checkTabClicked(menuTab, x, y)) {
                 this.selectTab(menuTab);
@@ -314,9 +312,21 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;mouseScrolled(DDDD)Z")
     )
-    private boolean menuTabScrolled(CreativeModeInventoryScreen instance, double a, double b, double c, double distance, Operation<Boolean> original) {
-        if (original.call(instance, a, b, c, distance)) return true;
-        return selectedTab instanceof CreativeMenuTab<?> menuTab && menuTab.mouseScrolled(distance);
+    private boolean menuTabScrolled(
+            CreativeModeInventoryScreen instance,
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY,
+            Operation<Boolean> original
+    ) {
+        if (original.call(instance, mouseX, mouseY, scrollX, scrollY)) return true;
+        return selectedTab instanceof CreativeMenuTab<?> menuTab && menuTab.mouseScrolled(
+                mouseX,
+                mouseY,
+                scrollX,
+                scrollY
+        );
     }
 
     @WrapOperation(
