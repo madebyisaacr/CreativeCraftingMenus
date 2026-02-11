@@ -119,7 +119,7 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
     public boolean mouseClicked(@NotNull MouseButtonEvent mouseButtonEvent, boolean isDoubleClick) {
         if (!this.open) {
             int button = mouseButtonEvent.button();
-            if (button == 0) {
+            if (button == 0 && !this.children().isEmpty()) {
                 this.open = true;
                 this.setScrollAmount(0);
                 Entry<T> selected = this.getSelected();
