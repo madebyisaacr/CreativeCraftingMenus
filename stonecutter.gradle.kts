@@ -12,7 +12,6 @@ stonecutter parameters {
         string(current.parsed >= "1.21.11") {
             replace("ResourceLocation", "Identifier")
             replace(".location()", ".identifier()")
-            replace("(Object2IntMap.Entry<Holder<Enchantment>>) Map.entry", "Object2IntMap.entry")
         }
     }
 }

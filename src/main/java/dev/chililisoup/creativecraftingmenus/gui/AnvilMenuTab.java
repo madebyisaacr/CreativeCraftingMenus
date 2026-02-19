@@ -690,7 +690,13 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
 
             for (Holder<Enchantment> enchant : sortedEnchantSet) {
                 int level = enchants.getLevel(enchant);
-                if (enchants.getLevel(enchant) > 0) sorted.add(Object2IntMap.entry(enchant, level));
+                if (enchants.getLevel(enchant) > 0) sorted.add(
+                        //? if < 1.21.11 {
+                        /*(Object2IntMap.Entry<Holder<Enchantment>>) Map
+                        *///?} else
+                        Object2IntMap
+                        .entry(enchant, level)
+                );
             }
 
             for (Object2IntMap.Entry<Holder<Enchantment>> enchant : enchants.entrySet())
