@@ -2,6 +2,7 @@ package dev.chililisoup.creativecraftingmenus.gui.components;
 
 import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import dev.chililisoup.creativecraftingmenus.util.VersionHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -99,7 +99,8 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
             }
 
             Entry<T> selected = this.getSelected();
-            if (selected != null) guiGraphics.textRenderer().acceptScrolling(
+            if (selected != null) VersionHelper.drawScrollingString(
+                    guiGraphics,
                     selected.name,
                     this.getX() + 3,
                     this.getX() + 3,
@@ -184,7 +185,7 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
     }
 
     @Override
-    protected void renderScrollbar(@NonNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void renderScrollbar(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 this.scrollbarVisible() ? StonecutterScreen.SCROLLER_SPRITE : StonecutterScreen.SCROLLER_DISABLED_SPRITE,
@@ -225,7 +226,8 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
                 guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
             }
 
-            guiGraphics.textRenderer().acceptScrolling(
+            VersionHelper.drawScrollingString(
+                    guiGraphics,
                     this.name,
                     this.getContentX(),
                     this.getContentX(),

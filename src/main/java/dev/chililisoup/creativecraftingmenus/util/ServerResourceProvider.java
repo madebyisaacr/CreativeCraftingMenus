@@ -1,7 +1,6 @@
 package dev.chililisoup.creativecraftingmenus.util;
 
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
-import net.fabricmc.fabric.impl.resource.pack.ModPackResourcesUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.server.IntegratedServer;
@@ -17,12 +16,19 @@ import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.resources.*;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
-import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.WorldDataConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+//? if < 1.21.11 {
+/*import net.minecraft.Util;
+import net.fabricmc.fabric.impl.resource.loader.ModResourcePackUtil;
+*///?} else {
+import net.minecraft.util.Util;
+import net.fabricmc.fabric.impl.resource.pack.ModPackResourcesUtil;
+ //?}
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -114,7 +120,10 @@ public final class ServerResourceProvider {
     }
 
     private static RecipeManager createVanillaRecipeManager() {
-        PackRepository packRepository = ModPackResourcesUtil.createClientManager();
+        PackRepository packRepository =
+                /*? if < 1.21.11 {*/ /*ModResourcePackUtil *//*?} else {*/ ModPackResourcesUtil /*?}*/
+                .createClientManager();
+
         MinecraftServer.configurePackRepository(
                 packRepository, WorldDataConfiguration.DEFAULT, false, false
         );

@@ -11,7 +11,7 @@ import net.minecraft.network.chat.contents.objects.ObjectInfo;
 import net.minecraft.network.chat.contents.objects.PlayerSprite;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.component.ResolvableProfile;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -81,7 +81,11 @@ public final class FullTextParser {
             }
 
             if (objectInfo instanceof AtlasSprite(Identifier atlas, Identifier sprite))
-                return "<atlas '" + atlas.toShortString() + "' '" + sprite.toShortString() + "'>";
+                return String.format(
+                        "<atlas '%s' '%s'>",
+                        atlas /*? if >= 1.21.11 {*/ .toShortString() /*?}*/,
+                        sprite /*? if >= 1.21.11 {*/ .toShortString() /*?}*/
+                );
         }
 
         return "";

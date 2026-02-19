@@ -11,7 +11,7 @@ pluginManagement {
 plugins {
     kotlin("jvm") version "2.3.0" apply false
     id("com.google.devtools.ksp") version "2.3.4" apply false
-    id("dev.kikugie.stonecutter") version "0.8.2"
+    id("dev.kikugie.stonecutter") version "0.8.3"
 }
 
 stonecutter {
@@ -19,7 +19,7 @@ stonecutter {
     centralScript = "build.gradle.kts"
 
     create(rootProject) {
-        versions("1.21.11")
+        versions("1.21.10", "1.21.11")
 
         vcsVersion = "1.21.11"
     }

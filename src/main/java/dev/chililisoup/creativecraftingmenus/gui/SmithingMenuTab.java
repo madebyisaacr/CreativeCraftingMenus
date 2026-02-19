@@ -57,13 +57,15 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
             ItemTags.AXES,
             ItemTags.SHOVELS,
             ItemTags.HOES,
-            ItemTags.SPEARS,
             ItemTags.HEAD_ARMOR,
             ItemTags.CHEST_ARMOR,
             ItemTags.LEG_ARMOR,
             ItemTags.FOOT_ARMOR,
+            //? if >= 1.21.11 {
+            ItemTags.SPEARS,
             ConventionalItemTags.HORSE_ARMORS,
             ConventionalItemTags.NAUTILUS_ARMORS,
+            //?}
             ItemTags.SIGNS,
             ItemTags.HANGING_SIGNS,
             ItemTags.BANNERS,
@@ -90,6 +92,10 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         this.armorStandPreview.elytraRotX = Mth.PI / 12F;
         this.armorStandPreview.elytraRotY = 0F;
         this.armorStandPreview.elytraRotZ = -this.armorStandPreview.elytraRotX;
+
+        //? if < 1.21.11 {
+        /*this.armorStandPreview.lightCoords = 0xF000F0;
+        *///?}
     }
 
     @Override
@@ -465,8 +471,13 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private void updateItem(ItemStack itemStack) {
         this.pageContents = this.selectedPage.contentsSupplier.apply(this);
 
+        //? if < 1.21.11 {
+        /*this.armorStandPreview.leftHandItem.clear();
+        *///?} else {
         this.armorStandPreview.leftHandItemStack = ItemStack.EMPTY;
         this.armorStandPreview.leftHandItemState.clear();
+        //?}
+
         this.armorStandPreview.headEquipment = ItemStack.EMPTY;
         this.armorStandPreview.headItem.clear();
         this.armorStandPreview.chestEquipment = ItemStack.EMPTY;
@@ -495,8 +506,12 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
             case LEGS -> this.armorStandPreview.legsEquipment = itemStack.copy();
             case FEET -> this.armorStandPreview.feetEquipment = itemStack.copy();
             default -> {
+                //? if >= 1.21.11
                 this.armorStandPreview.leftHandItemStack = itemStack.copy();
                 itemModelResolver.updateForTopItem(
+                        //? if < 1.21.11 {
+                        /*this.armorStandPreview.leftHandItem,
+                        *///?} else
                         this.armorStandPreview.leftHandItemState,
                         itemStack,
                         ItemDisplayContext.THIRD_PERSON_LEFT_HAND,

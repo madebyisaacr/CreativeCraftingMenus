@@ -5,6 +5,7 @@ import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.config.BannerPresets;
 import dev.chililisoup.creativecraftingmenus.config.ModConfig;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
+import dev.chililisoup.creativecraftingmenus.util.VersionHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -13,7 +14,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.object.banner.BannerFlagModel;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -33,6 +33,12 @@ import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+
+//? if < 1.21.11 {
+/*import net.minecraft.client.model.BannerFlagModel;
+*///?} else {
+import net.minecraft.client.model.object.banner.BannerFlagModel;
+ //?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,6 +108,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
         this.groupNameBox.setTextColor(-1);
         this.groupNameBox.setTextColorUneditable(-1);
+        //? if >= 1.21.11
         this.groupNameBox.setInvertHighlightedTextColor(false);
         this.groupNameBox.setBordered(true);
         this.groupNameBox.setResponder(this::onGroupNameChanged);
@@ -488,7 +495,8 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
                             14
                     );
 
-                    if (group != null) guiGraphics.textRenderer().acceptScrolling(
+                    if (group != null) VersionHelper.drawScrollingString(
+                            guiGraphics,
                             label,
                             left + 3,
                             left + 3,
@@ -518,7 +526,8 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
                     12
             );
 
-            if (instance.builtInGroups) guiGraphics.textRenderer().acceptScrolling(
+            if (instance.builtInGroups) VersionHelper.drawScrollingString(
+                    guiGraphics,
                     Component.literal(instance.selectedPresetGroup),
                     left + 8,
                     left + 8,
@@ -586,7 +595,8 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
                     14
             );
 
-            guiGraphics.textRenderer().acceptScrolling(
+            VersionHelper.drawScrollingString(
+                    guiGraphics,
                     label,
                     left + 3,
                     left + 3,

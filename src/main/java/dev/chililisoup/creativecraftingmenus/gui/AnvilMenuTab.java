@@ -7,6 +7,7 @@ import dev.chililisoup.creativecraftingmenus.gui.components.NameLoreEditBox;
 import dev.chililisoup.creativecraftingmenus.util.MenuHelper;
 import dev.chililisoup.creativecraftingmenus.util.FullTextParser;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
+import dev.chililisoup.creativecraftingmenus.util.VersionHelper;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,7 +26,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
-import net.minecraft.util.Util;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
@@ -36,6 +36,12 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+//? if < 1.21.11 {
+/*import net.minecraft.Util;
+ *///?} else {
+import net.minecraft.util.Util;
+//?}
 
 import java.net.URI;
 import java.util.*;
@@ -260,7 +266,8 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
                             -1
                     );
 
-                    guiGraphics.textRenderer().acceptScrolling(
+                    VersionHelper.drawScrollingString(
+                            guiGraphics,
                             label,
                             left + 15,
                             left + 15,

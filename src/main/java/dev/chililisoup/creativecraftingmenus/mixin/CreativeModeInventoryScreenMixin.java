@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.config.ModConfig;
 import dev.chililisoup.creativecraftingmenus.gui.CreativeMenuTab;
@@ -45,6 +44,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+//? if >= 1.21.11 {
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
+//?}
+
 import java.util.List;
 
 @Mixin(value = CreativeModeInventoryScreen.class, priority = 999)
@@ -83,6 +86,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             ordinal = 0
     ))
     private void menuTabInit(CallbackInfo ci) {
+        //? if < 1.21.11
+        //if (this.minecraft == null) return;
+
         if (selectedTab instanceof CreativeMenuTab<?> menuTab)
             menuTab.init(this, this.minecraft.player);
     }
@@ -99,6 +105,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Inject(method = "selectTab", at = @At("HEAD"))
     private void updateMenuTabs(CreativeModeTab tab, CallbackInfo ci) {
+        //? if < 1.21.11
+        //if (this.minecraft == null) return;
+
         if (selectedTab == tab) return;
         if (selectedTab instanceof CreativeMenuTab<?> oldTab)
             oldTab.remove();
@@ -141,6 +150,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     }
 
     @Inject(method = "renderTabButton", at = @At("HEAD"), cancellable = true)
+    //? if < 1.21.11 {
+    /*private void renderMenuTabButton(GuiGraphics guiGraphics, CreativeModeTab tab, CallbackInfo ci) {
+    *///?} else
     private void renderMenuTabButton(GuiGraphics guiGraphics, int mouseX, int mouseY, CreativeModeTab tab, CallbackInfo ci) {
         if (!(tab instanceof CreativeMenuTab)) return;
 
@@ -149,8 +161,10 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
         int y = this.getTabY(tab) + this.topPos;
         Identifier sprite = selected ? SELECTED_MENU_TAB : UNSELECTED_MENU_TAB;
 
+        //? if >= 1.21.11 {
         if (!selected && mouseX > x && mouseY > y && mouseX < x + 26 && mouseY < y + 26)
             guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+        //?}
 
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 26, 26);
         guiGraphics.renderItem(tab.getIconItem(), x + 5, y + 5);

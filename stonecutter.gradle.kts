@@ -6,6 +6,21 @@ plugins {
 
 stonecutter active "1.21.11"
 
+// See https://stonecutter.kikugie.dev/wiki/config/params
+stonecutter parameters {
+    replacements {
+        string(current.parsed >= "1.21.11") {
+            replace("ResourceLocation", "Identifier")
+            replace(".location()", ".identifier()")
+            replace("(Object2IntMap.Entry<Holder<Enchantment>>) Map.entry", "Object2IntMap.entry")
+        }
+    }
+}
+
+stonecutter handlers {
+    inherit("accesswidener", "classtweaker")
+}
+
 allprojects {
     repositories {
         mavenCentral()

@@ -29,7 +29,10 @@ public abstract class EffectsInInventoryMixin {
     @Definition(id = "screen", field = "Lnet/minecraft/client/gui/screens/inventory/EffectsInInventory;screen:Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;")
     @Definition(id = "imageWidth", field = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;imageWidth:I")
     @Expression("this.screen.imageWidth")
-    @ModifyExpressionValue(method = "render", at = @At("MIXINEXTRAS:EXPRESSION"))
+    @ModifyExpressionValue(
+            method = /*? if < 1.21.11 {*/ /*"renderEffects" *//*?} else {*/ "render" /*?}*/,
+            at = @At("MIXINEXTRAS:EXPRESSION")
+    )
     private int adjustRenderX(int original) {
         return screen instanceof CreativeModeInventoryScreen ?
                 original + 24 + 2 * ModConfig.HANDLER.instance().tabSpacingX :

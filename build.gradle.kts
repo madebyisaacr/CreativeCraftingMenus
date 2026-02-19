@@ -41,8 +41,8 @@ val requiredJava = when {
 }
 
 loom {
-    fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json") // Useful for interface injection
-    accessWidenerPath = rootProject.file("src/main/resources/${mod.id}.classtweaker")
+    fabricModJsonPath = project.file("build/resources/main/fabric.mod.json") // Useful for interface injection
+    accessWidenerPath = project.file("build/resources/main/${mod.id}.classtweaker")
 
     runConfigs.all {
         ideConfigGenerated(false)
@@ -123,6 +123,10 @@ tasks {
             "compatibility_level" to "JAVA_${requiredJava.majorVersion}"
         ))
         filesMatching("*.mixins.json") { expand(mixinProps) }
+    }
+
+    validateAccessWidener {
+        dependsOn("processResources")
     }
 
     register<Copy>("buildAndCollect") {

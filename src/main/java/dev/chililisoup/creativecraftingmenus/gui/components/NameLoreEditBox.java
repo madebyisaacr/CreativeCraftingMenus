@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screens.inventory.StonecutterScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class NameLoreEditBox extends MultiLineEditBox {
     public boolean isEditable = true;
@@ -42,7 +42,7 @@ public class NameLoreEditBox extends MultiLineEditBox {
     }
 
     @Override
-    public boolean keyPressed(@NonNull KeyEvent event) {
+    public boolean keyPressed(@NotNull KeyEvent event) {
         return this.isEditable && super.keyPressed(event);
     }
 
@@ -72,7 +72,7 @@ public class NameLoreEditBox extends MultiLineEditBox {
     }
 
     @Override
-    protected void renderScrollbar(@NonNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void renderScrollbar(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 this.scrollbarVisible() ? StonecutterScreen.SCROLLER_SPRITE : StonecutterScreen.SCROLLER_DISABLED_SPRITE,
