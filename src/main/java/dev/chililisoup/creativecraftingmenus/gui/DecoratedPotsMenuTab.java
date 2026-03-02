@@ -39,9 +39,11 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     private static final int ITEM_WIDTH = 16;
     private static final int ITEM_HEIGHT = 18;
 
-    private static final int SLOT_SIZE = 16;
-    private static final int[] SLOT_X = {113, 94, 132, 113};  // front, left, right, back
-    private static final int[] SLOT_Y = {54, 35, 35, 16};
+    private static final int SLOT_SIZE = 18;
+    private static final int SLOT_VISUAL_SIZE = 16;
+    private static final int SLOT_VISUAL_OFFSET = (SLOT_SIZE - SLOT_VISUAL_SIZE) / 2;  // 1, centers 16 in 18
+    private static final int[] SLOT_X = {112, 93, 131, 112};  // front, left, right, back
+    private static final int[] SLOT_Y = {53, 34, 34, 15};
     private static final String[] SLOT_KEYS = {
             "container.creative_crafting_menus.decorated_pots.side.front",
             "container.creative_crafting_menus.decorated_pots.side.left",
@@ -109,10 +111,12 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
             int y = screen.topPos + SLOT_Y[i];
             boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + SLOT_SIZE && mouseY < y + SLOT_SIZE;
             boolean selected = i == this.selectedSlotIndex;
+            int vx = x + SLOT_VISUAL_OFFSET;
+            int vy = y + SLOT_VISUAL_OFFSET;
             if (selected) {
-                guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0xFF6E82A3);  // selected: #6E82A3
+                guiGraphics.fill(vx, vy, vx + SLOT_VISUAL_SIZE, vy + SLOT_VISUAL_SIZE, 0xFF6E82A3);  // selected: #6E82A3
             } else if (hovered) {
-                guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
+                guiGraphics.fill(vx, vy, vx + SLOT_VISUAL_SIZE, vy + SLOT_VISUAL_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
             }
             if (hovered) {
                 List<Component> tooltip = new ArrayList<>();
@@ -126,7 +130,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
 
             Item sherd = this.slotSherds[i];
             if (sherd != null) {
-                guiGraphics.renderItem(sherd.getDefaultInstance(), x, y);
+                guiGraphics.renderItem(sherd.getDefaultInstance(), vx, vy);
             }
         }
     }
