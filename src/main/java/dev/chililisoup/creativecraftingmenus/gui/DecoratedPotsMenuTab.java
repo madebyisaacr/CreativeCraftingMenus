@@ -37,7 +37,13 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     private static final int ITEM_WIDTH = 16;
     private static final int ITEM_HEIGHT = 18;
 
+    private static final int SLOT_SIZE = 16;
+    private static final int[] SLOT_X = {113, 94, 132, 113};  // front, left, right, back
+    private static final int[] SLOT_Y = {54, 35, 35, 16};
+
     private final ArrayList<Item> sherdItems = new ArrayList<>();
+    private final Item @Nullable [] slotSherds = new Item[4];  // front, left, right, back
+    private int selectedSlotIndex = 0;  // front selected by default
     private List<GridItem> gridContents = List.of();
     private int selectedIndex = 0;
     private float scrollOffs;
@@ -86,6 +92,45 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     public void render(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         this.renderScrollBar(screen, guiGraphics, mouseX, mouseY);
         this.renderGrid(screen, guiGraphics, mouseX, mouseY);
+        this.renderSlotButtons(screen, guiGraphics, mouseX, mouseY);
+    }
+
+    private void renderSlotButtons(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        for (int i = 0; i < 4; i++) {
+            int x = screen.leftPos + SLOT_X[i];
+            int y = screen.topPos + SLOT_Y[i];
+            boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + SLOT_SIZE && mouseY < y + SLOT_SIZE;
+            boolean selected = i == this.selectedSlotIndex;
+            if (selected) {
+                guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0xFF6E82A3);  // selected: #6E82A3
+            } else if (hovered) {
+                guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
+            }
+            Item sherd = this.slotSherds[i];
+            if (sherd != null) {
+                guiGraphics.renderItem(sherd.getDefaultInstance(), x, y);
+            }
+        }
+    }
+
+    private int getGridIndexForSlotSherd(@Nullable Item sherd) {
+        if (sherd == null) return 0;
+        for (int i = 0; i < this.sherdItems.size(); i++) {
+            if (this.sherdItems.get(i) == sherd) return i + 1;
+        }
+        return 0;
+    }
+
+    private @Nullable Integer checkSlotButtonClicked(double mouseX, double mouseY) {
+        if (this.screen == null) return null;
+
+        for (int i = 0; i < 4; i++) {
+            int x = this.screen.leftPos + SLOT_X[i];
+            int y = this.screen.topPos + SLOT_Y[i];
+            if (mouseX >= x && mouseY >= y && mouseX < x + SLOT_SIZE && mouseY < y + SLOT_SIZE)
+                return i;
+        }
+        return null;
     }
 
     private void renderScrollBar(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -154,6 +199,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         if (mouseButtonEvent.x() >= x && mouseButtonEvent.x() < x + 12 && mouseButtonEvent.y() >= y && mouseButtonEvent.y() < y + SCROLLBAR_HEIGHT)
             this.scrolling = true;
 
+        if (checkSlotButtonClicked(mouseButtonEvent.x(), mouseButtonEvent.y()) != null) return true;
         return checkGridClicked(mouseButtonEvent.x(), mouseButtonEvent.y()) != null;
     }
 
@@ -161,9 +207,18 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
         this.scrolling = false;
 
+        Integer slotClicked = checkSlotButtonClicked(mouseButtonEvent.x(), mouseButtonEvent.y());
+        if (slotClicked != null) {
+            this.selectedSlotIndex = slotClicked;
+            this.selectedIndex = getGridIndexForSlotSherd(this.slotSherds[slotClicked]);
+            this.gridContents = getGridContents();
+            return true;
+        }
+
         Integer clicked = checkGridClicked(mouseButtonEvent.x(), mouseButtonEvent.y());
         if (clicked != null) {
             this.selectedIndex = clicked;
+            this.slotSherds[this.selectedSlotIndex] = clicked == 0 ? null : this.sherdItems.get(clicked - 1);
             this.gridContents = getGridContents();
             return true;
         }
@@ -209,6 +264,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         this.gridContents = List.of();
         this.scrollOffs = 0F;
         this.startIndex = 0;
+        this.selectedSlotIndex = 0;
         super.remove();
     }
 
@@ -218,6 +274,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         this.gridContents = List.of();
         this.scrollOffs = 0F;
         this.startIndex = 0;
+        this.selectedSlotIndex = 0;
         super.dispose();
     }
 
