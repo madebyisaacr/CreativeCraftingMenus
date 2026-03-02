@@ -2,6 +2,7 @@ package dev.chililisoup.creativecraftingmenus.gui;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -15,10 +16,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -40,6 +42,12 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     private static final int SLOT_SIZE = 16;
     private static final int[] SLOT_X = {113, 94, 132, 113};  // front, left, right, back
     private static final int[] SLOT_Y = {54, 35, 35, 16};
+    private static final String[] SLOT_KEYS = {
+            "container.creative_crafting_menus.decorated_pots.side.front",
+            "container.creative_crafting_menus.decorated_pots.side.left",
+            "container.creative_crafting_menus.decorated_pots.side.right",
+            "container.creative_crafting_menus.decorated_pots.side.back"
+    };
 
     private final ArrayList<Item> sherdItems = new ArrayList<>();
     private final Item @Nullable [] slotSherds = new Item[4];  // front, left, right, back
@@ -106,6 +114,16 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
             } else if (hovered) {
                 guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
             }
+            if (hovered) {
+                List<Component> tooltip = new ArrayList<>();
+                tooltip.add(Component.translatable(SLOT_KEYS[i]));
+                Item sherd = this.slotSherds[i];
+                if (sherd != null) {
+                    tooltip.add(sherd.getName(sherd.getDefaultInstance()).copy().withStyle(ChatFormatting.GRAY));
+                }
+                guiGraphics.setComponentTooltipForNextFrame(screen.getFont(), tooltip, (int) mouseX, (int) mouseY);
+            }
+
             Item sherd = this.slotSherds[i];
             if (sherd != null) {
                 guiGraphics.renderItem(sherd.getDefaultInstance(), x, y);
