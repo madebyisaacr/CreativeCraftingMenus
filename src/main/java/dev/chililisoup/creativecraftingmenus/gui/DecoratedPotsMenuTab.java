@@ -1,25 +1,20 @@
 package dev.chililisoup.creativecraftingmenus.gui;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import com.mojang.datafixers.util.Pair;
-import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.equipment.trim.TrimPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,8 +26,6 @@ import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROL
 import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROLLER_SPRITE;
 
 public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.DecoratedPotsTabMenu> {
-    private static final Identifier PLACEHOLDER_TRIM = CreativeCraftingMenus.id("icon/placeholder_trim_smithing_template");
-
     private static final int GRID_LEFT = 9;
     private static final int GRID_TOP = 16;
     private static final int SCROLLBAR_LEFT = GRID_LEFT + 4 * 16 + 3;
@@ -44,7 +37,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     private static final int ITEM_WIDTH = 16;
     private static final int ITEM_HEIGHT = 18;
 
-    private final ArrayList<Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack>> trimPatterns = new ArrayList<>();
+    private final ArrayList<Item> sherdItems = new ArrayList<>();
     private List<GridItem> gridContents = List.of();
     private int selectedIndex = 0;
     private float scrollOffs;
@@ -64,16 +57,8 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     public void subInit() {
         this.scrolling = false;
 
-        if (trimPatterns.isEmpty()) {
-            trimPatterns.add(Pair.of(null, Items.BARRIER.getDefaultInstance()));
-            trimPatterns.addAll(ServerResourceProvider.getRegistryElements(Registries.TRIM_PATTERN).stream().map(
-                    patternRef -> Pair.of(
-                            patternRef,
-                            BuiltInRegistries.ITEM.get(
-                                    patternRef.value().assetId().withSuffix("_armor_trim_smithing_template")
-                            ).map(ref -> ref.value().getDefaultInstance()).orElse(ItemStack.EMPTY)
-                    )
-            ).toList());
+        if (sherdItems.isEmpty()) {
+            sherdItems.addAll(ServerResourceProvider.getFromTag(ItemTags.DECORATED_POT_SHERDS));
         }
 
         this.gridContents = getGridContents();
@@ -81,18 +66,17 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
 
     private List<GridItem> getGridContents() {
         List<GridItem> list = new ArrayList<>();
-        for (int i = 0; i < trimPatterns.size(); i++) {
-            Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack> template = trimPatterns.get(i);
-            Holder.@Nullable Reference<@NotNull TrimPattern> pattern = template.getFirst();
+        list.add(new GridItem(
+                Component.translatable("gui.none"),
+                (guiGraphics, x, y) -> guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), x, y),
+                0 == this.selectedIndex
+        ));
+        for (int i = 0; i < sherdItems.size(); i++) {
+            Item item = sherdItems.get(i);
             list.add(new GridItem(
-                    pattern == null ? Component.translatable("gui.none") : pattern.value().description(),
-                    (guiGraphics, x, y) -> {
-                        ItemStack itemStack = template.getSecond();
-                        if (itemStack.isEmpty())
-                            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, PLACEHOLDER_TRIM, x, y, 16, 16);
-                        else guiGraphics.renderItem(itemStack, x, y);
-                    },
-                    i == this.selectedIndex
+                    item.getName(item.getDefaultInstance()),
+                    (guiGraphics, x, y) -> guiGraphics.renderItem(item.getDefaultInstance(), x, y),
+                    i + 1 == this.selectedIndex
             ));
         }
         return list;
@@ -230,7 +214,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
 
     @Override
     public void dispose() {
-        this.trimPatterns.clear();
+        this.sherdItems.clear();
         this.gridContents = List.of();
         this.scrollOffs = 0F;
         this.startIndex = 0;
