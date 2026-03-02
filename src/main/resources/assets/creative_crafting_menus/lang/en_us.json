@@ -26,6 +26,8 @@
   "container.creative_crafting_menus.anvil.enchantments": "Enchantments",
   "container.creative_crafting_menus.anvil.add_enchantment": "Add Enchantment",
   "container.creative_crafting_menus.anvil.remove_enchantment": "Remove Enchantment",
+  "container.creative_crafting_menus.anvil.increase_enchantment_level": "Increase Level",
+  "container.creative_crafting_menus.anvil.decrease_enchantment_level": "Decrease Level",
 
   "creative_crafting_menus.config": "Creative Crafting Menus Config",
   "creative_crafting_menus.config.inventoryCraftingGrid": "Inventory Crafting Grid",

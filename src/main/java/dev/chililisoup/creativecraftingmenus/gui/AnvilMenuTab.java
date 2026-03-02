@@ -224,20 +224,39 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
                         enchant.getKey().value().description() :
                         Component.translatable("container.creative_crafting_menus.anvil.add_enchantment");
 
-                boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + 123 && mouseY < y + 14;
+                boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + 134 && mouseY < y + 14;
                 boolean addDeleteHovered = anyHovered && mouseX < left + 12;
 
                 if (enchant != null) {
                     boolean labelHovered = anyHovered && !addDeleteHovered && mouseX < left + 103;
-                    boolean levelHovered = anyHovered && !addDeleteHovered && !labelHovered;
+                    boolean levelButtonHovered = anyHovered && !addDeleteHovered && mouseX >= left + 103 && mouseX < left + 123;
+                    boolean upHovered = anyHovered && !addDeleteHovered &&
+                            mouseX >= left + 124 && mouseX < left + 133 && mouseY >= y && mouseY < y + 7;
+                    boolean downHovered = anyHovered && !addDeleteHovered &&
+                            mouseX >= left + 124 && mouseX < left + 133 && mouseY >= y + 7 && mouseY < y + 14;
 
                     if (anyHovered) {
-                        if (!labelHovered) guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
-                        if (!levelHovered) guiGraphics.setTooltipForNextFrame(
-                                labelHovered ? label : Component.translatable("container.creative_crafting_menus.anvil.remove_enchantment"),
-                                mouseX,
-                                mouseY
-                        );
+                        if (labelHovered) {
+                            guiGraphics.setTooltipForNextFrame(label, mouseX, mouseY);
+                        } else if (addDeleteHovered) {
+                            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+                            guiGraphics.setTooltipForNextFrame(
+                                    Component.translatable("container.creative_crafting_menus.anvil.remove_enchantment"),
+                                    mouseX,
+                                    mouseY
+                            );
+                        } else if (upHovered || downHovered) {
+                            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+                            guiGraphics.setTooltipForNextFrame(
+                                    Component.translatable(
+                                            "container.creative_crafting_menus.anvil." + (upHovered ? "increase" : "decrease") + "_enchantment_level"
+                                    ),
+                                    mouseX,
+                                    mouseY
+                            );
+                        } else if (levelButtonHovered) {
+                            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+                        }
                     }
 
                     guiGraphics.blitSprite(
@@ -251,11 +270,29 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
 
                     guiGraphics.blitSprite(
                             RenderPipelines.GUI_TEXTURED,
-                            levelHovered ? BUTTON_HIGHLIGHTED : BUTTON,
+                            levelButtonHovered ? BUTTON_HIGHLIGHTED : BUTTON,
                             left + 103,
                             y,
                             20,
                             14
+                    );
+
+                    guiGraphics.blitSprite(
+                            RenderPipelines.GUI_TEXTURED,
+                            upHovered ? ARROW_UP_HIGHLIGHTED : ARROW_UP,
+                            left + 124,
+                            y + 1,
+                            9,
+                            6
+                    );
+
+                    guiGraphics.blitSprite(
+                            RenderPipelines.GUI_TEXTURED,
+                            downHovered ? ARROW_DOWN_HIGHLIGHTED : ARROW_DOWN,
+                            left + 124,
+                            y + 7,
+                            9,
+                            6
                     );
 
                     guiGraphics.drawCenteredString(
@@ -335,15 +372,23 @@ public class AnvilMenuTab extends CreativeMenuTab<AnvilMenuTab.AnvilTabMenu> {
             int y = top + (i - instance.startIndex) * 14;
             Object2IntMap.@Nullable Entry<Holder<Enchantment>> enchant = enchants.get(i);
 
-            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + 123 && mouseY < y + 14;
+            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + 134 && mouseY < y + 14;
             if (!anyHovered) continue;
             boolean addDeleteHovered = mouseX < left + 12;
 
             if (enchant != null) {
-                boolean levelHovered = !addDeleteHovered && mouseX >= left + 103;
+                boolean levelButtonHovered = !addDeleteHovered && mouseX >= left + 103 && mouseX < left + 123;
+                boolean upHovered = !addDeleteHovered &&
+                        mouseX >= left + 124 && mouseX < left + 133 && mouseY >= y && mouseY < y + 7;
+                boolean downHovered = !addDeleteHovered &&
+                        mouseX >= left + 124 && mouseX < left + 133 && mouseY >= y + 7 && mouseY < y + 14;
 
                 if (addDeleteHovered) return () -> instance.menu.removeEnchantment(enchant.getKey());
-                else if (levelHovered) return () -> {
+                else if (upHovered || downHovered) return () -> {
+                    int change = (upHovered ? 1 : -1) * (mouseButtonEvent.hasShiftDown() ? 10 : 1);
+                    instance.menu.setEnchantment(enchant.getKey(), Math.max(enchant.getIntValue() + change, 1));
+                };
+                else if (levelButtonHovered) return () -> {
                     int change = (mouseButtonEvent.button() == 1 ? -1 : 1) * (mouseButtonEvent.hasShiftDown() ? 10 : 1);
                     instance.menu.setEnchantment(enchant.getKey(), Math.max(enchant.getIntValue() + change, 1));
                 };
