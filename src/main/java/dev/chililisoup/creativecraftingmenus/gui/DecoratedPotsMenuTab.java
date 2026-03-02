@@ -1,20 +1,55 @@
 package dev.chililisoup.creativecraftingmenus.gui;
 
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import com.mojang.datafixers.util.Pair;
+import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
+import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.equipment.trim.TrimPattern;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
-/**
- * Simple placeholder tab for decorated pots.
- * For now this just adds the button; it does not implement any custom UI or behavior.
- */
+import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROLLER_DISABLED_SPRITE;
+import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROLLER_SPRITE;
+
 public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.DecoratedPotsTabMenu> {
+    private static final Identifier PLACEHOLDER_TRIM = CreativeCraftingMenus.id("icon/placeholder_trim_smithing_template");
+
+    private static final int GRID_LEFT = 9;
+    private static final int GRID_TOP = 16;
+    private static final int SCROLLBAR_LEFT = GRID_LEFT + 4 * 16 + 3;
+    private static final int SCROLLBAR_TOP = GRID_TOP;
+    private static final int SCROLLBAR_HEIGHT = 54;
+    private static final int GRID_COLUMNS = 4;
+    private static final int VISIBLE_ROWS = 3;
+    private static final int VISIBLE_ITEMS = GRID_COLUMNS * VISIBLE_ROWS;
+    private static final int ITEM_WIDTH = 16;
+    private static final int ITEM_HEIGHT = 18;
+
+    private final ArrayList<Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack>> trimPatterns = new ArrayList<>();
+    private List<GridItem> gridContents = List.of();
+    private int selectedIndex = 0;
+    private float scrollOffs;
+    private boolean scrolling;
+    private int startIndex;
 
     public DecoratedPotsMenuTab(Component displayName, Supplier<ItemStack> iconGenerator, String id) {
         super(displayName, iconGenerator, id);
@@ -23,6 +58,189 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     @Override
     DecoratedPotsTabMenu createMenu(Player player) {
         return new DecoratedPotsTabMenu(player);
+    }
+
+    @Override
+    public void subInit() {
+        this.scrolling = false;
+
+        if (trimPatterns.isEmpty()) {
+            trimPatterns.add(Pair.of(null, Items.BARRIER.getDefaultInstance()));
+            trimPatterns.addAll(ServerResourceProvider.getRegistryElements(Registries.TRIM_PATTERN).stream().map(
+                    patternRef -> Pair.of(
+                            patternRef,
+                            BuiltInRegistries.ITEM.get(
+                                    patternRef.value().assetId().withSuffix("_armor_trim_smithing_template")
+                            ).map(ref -> ref.value().getDefaultInstance()).orElse(ItemStack.EMPTY)
+                    )
+            ).toList());
+        }
+
+        this.gridContents = getGridContents();
+    }
+
+    private List<GridItem> getGridContents() {
+        List<GridItem> list = new ArrayList<>();
+        for (int i = 0; i < trimPatterns.size(); i++) {
+            Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack> template = trimPatterns.get(i);
+            Holder.@Nullable Reference<@NotNull TrimPattern> pattern = template.getFirst();
+            list.add(new GridItem(
+                    pattern == null ? Component.translatable("gui.none") : pattern.value().description(),
+                    (guiGraphics, x, y) -> {
+                        ItemStack itemStack = template.getSecond();
+                        if (itemStack.isEmpty())
+                            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, PLACEHOLDER_TRIM, x, y, 16, 16);
+                        else guiGraphics.renderItem(itemStack, x, y);
+                    },
+                    i == this.selectedIndex
+            ));
+        }
+        return list;
+    }
+
+    @Override
+    public void render(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        this.renderScrollBar(screen, guiGraphics, mouseX, mouseY);
+        this.renderGrid(screen, guiGraphics, mouseX, mouseY);
+    }
+
+    private void renderScrollBar(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int x = screen.leftPos + SCROLLBAR_LEFT;
+        int y = screen.topPos + SCROLLBAR_TOP + (int) (39F * this.scrollOffs);
+
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                this.isScrollBarActive() ? SCROLLER_SPRITE : SCROLLER_DISABLED_SPRITE,
+                x,
+                y,
+                12,
+                15
+        );
+
+        if (mouseX >= x && mouseX < x + 12 && mouseY >= y && mouseY < y + 15)
+            guiGraphics.requestCursor(this.scrolling ? CursorTypes.RESIZE_NS : CursorTypes.POINTING_HAND);
+    }
+
+    private void renderGrid(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (this.menu == null) return;
+
+        for (int i = this.startIndex; i < this.gridContents.size() && i < VISIBLE_ITEMS + this.startIndex; i++) {
+            int x = screen.leftPos + GRID_LEFT + ((i - this.startIndex) % GRID_COLUMNS) * ITEM_WIDTH;
+            int y = screen.topPos + GRID_TOP + ((i - this.startIndex) / GRID_COLUMNS) * ITEM_HEIGHT;
+
+            GridItem item = this.gridContents.get(i);
+
+            boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + ITEM_WIDTH && mouseY < y + ITEM_HEIGHT;
+            if (hovered) {
+                if (!item.selected) guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+                guiGraphics.setTooltipForNextFrame(item.tooltip, mouseX, mouseY);
+            }
+
+            guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    item.selected ? BUTTON_SELECTED : (hovered ? BUTTON_HIGHLIGHTED : BUTTON),
+                    x,
+                    y,
+                    ITEM_WIDTH,
+                    ITEM_HEIGHT
+            );
+
+            item.iconRenderer.render(guiGraphics, x, y + 1);
+        }
+    }
+
+    private @Nullable Integer checkGridClicked(double mouseX, double mouseY) {
+        if (this.screen == null) return null;
+
+        for (int i = this.startIndex; i < this.gridContents.size() && i < VISIBLE_ITEMS + this.startIndex; i++) {
+            int x = this.screen.leftPos + GRID_LEFT + ((i - this.startIndex) % GRID_COLUMNS) * ITEM_WIDTH;
+            int y = this.screen.topPos + GRID_TOP + ((i - this.startIndex) / GRID_COLUMNS) * ITEM_HEIGHT;
+            if (mouseX >= x && mouseY >= y && mouseX < x + ITEM_WIDTH && mouseY < y + ITEM_HEIGHT)
+                return i;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent) {
+        if (this.screen == null) return false;
+
+        int x = this.screen.leftPos + SCROLLBAR_LEFT;
+        int y = this.screen.topPos + SCROLLBAR_TOP;
+        if (mouseButtonEvent.x() >= x && mouseButtonEvent.x() < x + 12 && mouseButtonEvent.y() >= y && mouseButtonEvent.y() < y + SCROLLBAR_HEIGHT)
+            this.scrolling = true;
+
+        return checkGridClicked(mouseButtonEvent.x(), mouseButtonEvent.y()) != null;
+    }
+
+    @Override
+    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
+        this.scrolling = false;
+
+        Integer clicked = checkGridClicked(mouseButtonEvent.x(), mouseButtonEvent.y());
+        if (clicked != null) {
+            this.selectedIndex = clicked;
+            this.gridContents = getGridContents();
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isScrollBarActive() {
+        return this.gridContents.size() > VISIBLE_ITEMS;
+    }
+
+    private int getOffscreenRows() {
+        return Math.max(0, (this.gridContents.size() - 9) / GRID_COLUMNS);
+    }
+
+    @Override
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent) {
+        if (this.screen == null || !this.scrolling || !this.isScrollBarActive())
+            return false;
+
+        int top = this.screen.topPos + SCROLLBAR_TOP;
+        int bottom = top + SCROLLBAR_HEIGHT;
+        this.scrollOffs = ((float) mouseButtonEvent.y() - top - 7.5F) / (bottom - top - 15F);
+        this.scrollOffs = Mth.clamp(this.scrollOffs, 0F, 1F);
+        this.startIndex = (int) (this.scrollOffs * Math.max(0, this.getOffscreenRows()) + 0.5) * GRID_COLUMNS;
+        return true;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (this.isScrollBarActive()) {
+            int offscreenRows = this.getOffscreenRows();
+            if (offscreenRows <= 0) return true;
+            float deltaY = (float) scrollY / offscreenRows;
+            this.scrollOffs = Mth.clamp(this.scrollOffs - deltaY, 0F, 1F);
+            this.startIndex = (int) (this.scrollOffs * offscreenRows + 0.5) * GRID_COLUMNS;
+        }
+        return true;
+    }
+
+    @Override
+    public void remove() {
+        this.gridContents = List.of();
+        this.scrollOffs = 0F;
+        this.startIndex = 0;
+        super.remove();
+    }
+
+    @Override
+    public void dispose() {
+        this.trimPatterns.clear();
+        this.gridContents = List.of();
+        this.scrollOffs = 0F;
+        this.startIndex = 0;
+        super.dispose();
+    }
+
+    private record GridItem(Component tooltip, IconRenderer iconRenderer, boolean selected) {
+        private interface IconRenderer {
+            void render(GuiGraphics guiGraphics, int x, int y);
+        }
     }
 
     public static class DecoratedPotsTabMenu extends CreativeMenuTab.CreativeTabMenu<DecoratedPotsTabMenu> {
