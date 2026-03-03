@@ -87,8 +87,7 @@ public abstract class BannerPresets {
         Map.of(
                 "Alphabet", DefaultBannerPresets.ALPHABET,
                 "Symbols", DefaultBannerPresets.SYMBOLS,
-                "Math", DefaultBannerPresets.MATH,
-                "Pride", DefaultBannerPresets.PRIDE
+                "Math", DefaultBannerPresets.MATH
         ).forEach((key, group) -> BUILT_IN_GROUPS.put(key, deserializeGroup(group)));
 
         LOADED = true;
