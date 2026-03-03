@@ -30,10 +30,10 @@ public class ModConfig {
     public boolean inventoryCraftingGrid = true;
 
     @SerialEntry(comment = "Spacing around the creative menu crafting tabs")
-    public int tabSpacingX = 9;
+    public int tabSpacingX = 4;
 
     @SerialEntry
-    public int tabSpacingY = 9;
+    public int tabSpacingY = 4;
 
     @SerialEntry(comment = "Disabled creative menu crafting tabs")
     public HashSet<String> disabledTabs = new HashSet<>();

@@ -68,7 +68,6 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
             //?}
             ItemTags.SIGNS,
             ItemTags.HANGING_SIGNS,
-            ItemTags.BANNERS,
             ConventionalItemTags.POTIONS
     );
 
