@@ -51,6 +51,13 @@ import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROL
 
 public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTabMenu> {
     private static final Identifier PLACEHOLDER_TRIM = CreativeCraftingMenus.id("icon/placeholder_trim_smithing_template");
+    private static final Set<TagKey<@NotNull Item>> ARMOR_TRIM_TAGS = Set.of(
+            ItemTags.HEAD_ARMOR,
+            ItemTags.CHEST_ARMOR,
+            ItemTags.LEG_ARMOR,
+            ItemTags.FOOT_ARMOR
+    );
+
     private static final Set<TagKey<@NotNull Item>> MATERIAL_SWAP_TAGS = Set.of(
             ItemTags.SWORDS,
             ItemTags.PICKAXES,
@@ -159,8 +166,9 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
                 screen.topPos + 80
         );
 
-        for (int i = 0; i < Page.values().length; i++) {
-            Page page = Page.values()[i];
+        List<Page> visiblePages = this.getVisiblePages();
+        for (int i = 0; i < visiblePages.size(); i++) {
+            Page page = visiblePages.get(i);
             int x = screen.leftPos + 33;
             int y = screen.topPos + 15 + i * 19;
             boolean selected = page == this.selectedPage;
@@ -351,8 +359,9 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private @Nullable Page checkPageClicked(double mouseX, double mouseY) {
         if (this.screen == null) return null;
 
-        for (int i = 0; i < Page.values().length; i++) {
-            Page page = Page.values()[i];
+        List<Page> visiblePages = this.getVisiblePages();
+        for (int i = 0; i < visiblePages.size(); i++) {
+            Page page = visiblePages.get(i);
             if (page == this.selectedPage) continue;
 
             int x = this.screen.leftPos + 33;
@@ -413,6 +422,23 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         return false;
     }
 
+    private boolean canHaveArmorTrim(ItemStack itemStack) {
+        if (itemStack.isEmpty()) return true;
+        for (TagKey<@NotNull Item> tag : ARMOR_TRIM_TAGS) {
+            if (itemStack.is(tag)) return true;
+        }
+        return false;
+    }
+
+    private List<Page> getVisiblePages() {
+        if (this.menu == null) return List.of(Page.TRIM_PATTERN, Page.TRIM_MATERIAL, Page.ITEM_MATERIAL);
+        ItemStack item = this.menu.getSlot(1).getItem();
+        if (canHaveArmorTrim(item)) {
+            return List.of(Page.TRIM_PATTERN, Page.TRIM_MATERIAL, Page.ITEM_MATERIAL);
+        }
+        return List.of(Page.ITEM_MATERIAL);
+    }
+
     private boolean isScrollBarActive() {
         return this.pageContents.size() > 12;
     }
@@ -468,6 +494,9 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     }
 
     private void updateItem(ItemStack itemStack) {
+        if (!this.canHaveArmorTrim(itemStack) && (this.selectedPage == Page.TRIM_PATTERN || this.selectedPage == Page.TRIM_MATERIAL)) {
+            this.selectedPage = Page.ITEM_MATERIAL;
+        }
         this.pageContents = this.selectedPage.contentsSupplier.apply(this);
 
         //? if < 1.21.11 {
