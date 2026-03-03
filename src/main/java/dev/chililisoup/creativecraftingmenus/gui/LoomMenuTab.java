@@ -243,7 +243,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
     private void renderButtons(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
         int left = screen.leftPos + 99;
-        int top = screen.topPos + (ModConfig.HANDLER.instance().altLoomMenu ? 67 : 8);
+        int top = screen.topPos + 8;
 
         boolean presetsPage = this.selectedPage == Page.PRESETS;
         for (int i = 0; i < 3; i++) {
@@ -295,7 +295,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
         DyeColor dyeColor = this.menu.getColors().get(this.selectedLayer + 1);
 
         int left = screen.leftPos + 100;
-        int top = screen.topPos + (ModConfig.HANDLER.instance().altLoomMenu ? 9 : 21);
+        int top = screen.topPos + 21;
 
         for (int i = 0; i < COLORS.length; i++) {
             int x = left + (i % 4) * 14;
@@ -570,7 +570,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
         if (this.menu == null) return;
 
         int left = screen.leftPos + 100;
-        int top = screen.topPos + (ModConfig.HANDLER.instance().altLoomMenu ? 9 : 21);
+        int top = screen.topPos + 21;
 
         for (int i = 0; i < 2; i++) {
             int y = top + i * 14;
@@ -735,7 +735,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
         if (presetsPage && this.builtInGroups) return -1;
 
         int left = screen.leftPos + 99;
-        int top = screen.topPos + (ModConfig.HANDLER.instance().altLoomMenu ? 67 : 8);
+        int top = screen.topPos + 8;
 
         if (presetsPage && this.selectedPresetGroup == null) return -1;
         for (int i = 0; i < 3; i++) {
@@ -756,7 +756,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
         DyeColor dyeColor = this.menu.getColors().get(this.selectedLayer + 1);
         int left = this.screen.leftPos + 100;
-        int top = this.screen.topPos + (ModConfig.HANDLER.instance().altLoomMenu ? 9 : 21);
+        int top = this.screen.topPos + 21;
 
         for (int i = 0; i < COLORS.length; i++) {
             DyeColor color = COLORS[i];
@@ -801,7 +801,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
         if (this.screen == null || this.menu == null) return null;
 
         int left = this.screen.leftPos + 100;
-        int top = this.screen.topPos + (ModConfig.HANDLER.instance().altLoomMenu ? 9 : 21);
+        int top = this.screen.topPos + 21;
 
         for (int i = 0; i < 2; i++) {
             if ((i == 0) == this.builtInGroups) continue;

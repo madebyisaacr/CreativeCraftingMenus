@@ -44,9 +44,6 @@ public class ModConfig {
     @SerialEntry(comment = "Allows the mod to make changes to banner item tooltips")
     public boolean bannerTooltipChanges = true;
 
-    @SerialEntry(comment = "Moves the creative loom menu's quick layer buttons to the bottom")
-    public boolean altLoomMenu = false;
-
     @SerialEntry
     public Map<String, BannerPresets.BannerPresetItem.SerializedBannerPresetItem[]> bannerPresets = Map.of();
 
@@ -137,18 +134,6 @@ public class ModConfig {
                                         () -> this.bannerTooltipChanges,
                                         newVal -> {
                                             this.bannerTooltipChanges = newVal;
-                                            HANDLER.save();
-                                        })
-                                .controller(TickBoxControllerBuilder::create)
-                                .build())
-                        .option(Option.<Boolean>createBuilder()
-                                .name(Component.translatable("creative_crafting_menus.config.altLoomMenu"))
-                                .description(OptionDescription.of(Component.translatable("creative_crafting_menus.config.altLoomMenu.desc")))
-                                .binding(
-                                        HANDLER.defaults().altLoomMenu,
-                                        () -> this.altLoomMenu,
-                                        newVal -> {
-                                            this.altLoomMenu = newVal;
                                             HANDLER.save();
                                         })
                                 .controller(TickBoxControllerBuilder::create)

@@ -54,8 +54,6 @@ import java.util.List;
 public abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<CreativeModeInventoryScreen.@NotNull ItemPickerMenu> {
     @Unique private static final Identifier CRAFTING_INVENTORY_BACKGROUND =
             CreativeCraftingMenus.id("textures/gui/container/creative_crafting_inventory.png");
-    @Unique private static final Identifier ALT_LOOM_MENU_BACKGROUND =
-            CreativeCraftingMenus.id("textures/gui/container/creative_loom_menu_alt.png");
     @Unique private static final Identifier SELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_selected");
     @Unique private static final Identifier UNSELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_unselected");
 
@@ -437,9 +435,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             target = "Lnet/minecraft/world/item/CreativeModeTab;getBackgroundTexture()Lnet/minecraft/resources/Identifier;"
     ))
     private Identifier swapBackgroundTexture(CreativeModeTab instance, Operation<Identifier> original) {
-        if (instance instanceof LoomMenuTab) return ModConfig.HANDLER.instance().altLoomMenu ?
-                ALT_LOOM_MENU_BACKGROUND :
-                original.call(instance);
+        if (instance instanceof LoomMenuTab) return original.call(instance);
         else return this.isInventoryOpen() && ModConfig.HANDLER.instance().inventoryCraftingGrid ?
                 CRAFTING_INVENTORY_BACKGROUND :
                 original.call(instance);

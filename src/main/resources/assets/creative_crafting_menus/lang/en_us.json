@@ -39,7 +39,5 @@
   "creative_crafting_menus.config.dyeItemColorIcons": "Dye Item Color Icons",
   "creative_crafting_menus.config.dyeItemColorIcons.desc": "Whether dye pickers should use dye items for their icons instead of colored squares",
   "creative_crafting_menus.config.bannerTooltipChanges.desc": "Allows the mod to make changes to banner item tooltips",
-  "creative_crafting_menus.config.bannerTooltipChanges": "Enable Banner Tooltip Changes",
-  "creative_crafting_menus.config.altLoomMenu": "Alternate Loom Menu",
-  "creative_crafting_menus.config.altLoomMenu.desc": "Moves the creative loom menu's quick layer buttons to the bottom"
+  "creative_crafting_menus.config.bannerTooltipChanges": "Enable Banner Tooltip Changes"
 }
