@@ -28,8 +28,6 @@
   "container.creative_crafting_menus.anvil.remove_enchantment": "Remove Enchantment",
 
   "creative_crafting_menus.config": "Creative Crafting Menus Config",
-  "creative_crafting_menus.config.inventoryCraftingGrid": "Inventory Crafting Grid",
-  "creative_crafting_menus.config.inventoryCraftingGrid.desc": "Adds a 2x2 crafting grid to the creative menu's survival inventory",
   "creative_crafting_menus.config.tabSpacingX": "Horizontal Tab Spacing",
   "creative_crafting_menus.config.tabSpacingX.desc": "Horizontal spacing around the creative menu crafting tabs",
   "creative_crafting_menus.config.tabSpacingY": "Vertical Tab Spacing",

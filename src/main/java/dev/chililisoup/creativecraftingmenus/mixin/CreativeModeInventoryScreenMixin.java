@@ -8,7 +8,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.config.ModConfig;
 import dev.chililisoup.creativecraftingmenus.gui.CreativeMenuTab;
-import dev.chililisoup.creativecraftingmenus.gui.LoomMenuTab;
 import dev.chililisoup.creativecraftingmenus.reg.CreativeMenuTabs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -52,8 +51,6 @@ import java.util.List;
 
 @Mixin(value = CreativeModeInventoryScreen.class, priority = 999)
 public abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<CreativeModeInventoryScreen.@NotNull ItemPickerMenu> {
-    @Unique private static final Identifier CRAFTING_INVENTORY_BACKGROUND =
-            CreativeCraftingMenus.id("textures/gui/container/creative_crafting_inventory.png");
     @Unique private static final Identifier SELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_selected");
     @Unique private static final Identifier UNSELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_unselected");
 
@@ -403,17 +400,6 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             target = "Lnet/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen$SlotWrapper;"
     ))
     private static CreativeModeInventoryScreen.SlotWrapper moveSlots(Slot slot, int index, int x, int y, Operation<CreativeModeInventoryScreen.SlotWrapper> original) {
-        if (ModConfig.HANDLER.instance().inventoryCraftingGrid) {
-            if (index == 0) {
-                x = 173;
-                y = 20;
-            } else if (index >= 1 && index < 5) {
-                x = 117 + ((index + 1) % 2) * 18;
-                y = 10 + ((index - 1) / 2) * 18;
-            } else if ((index >= 5 && index < 9) || index == 45)
-                x -= 27;
-        }
-
         return original.call(slot, index, x, y);
     }
 
@@ -424,20 +410,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     ))
     private static void movePaperDoll(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int a, float b, float c, float d, LivingEntity livingEntity, Operation<Void> original) {
         if (selectedTab instanceof CreativeMenuTab) return;
-        if (ModConfig.HANDLER.instance().inventoryCraftingGrid)
-            original.call(guiGraphics, x1 - 27, y1, x2 - 27, y2, a, b, c, d, livingEntity);
-        else original.call(guiGraphics, x1, y1, x2, y2, a, b, c, d, livingEntity);
+        original.call(guiGraphics, x1, y1, x2, y2, a, b, c, d, livingEntity);
     }
 
-    @WrapOperation(
-            method = "renderBg", at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/item/CreativeModeTab;getBackgroundTexture()Lnet/minecraft/resources/Identifier;"
-    ))
-    private Identifier swapBackgroundTexture(CreativeModeTab instance, Operation<Identifier> original) {
-        if (instance instanceof LoomMenuTab) return original.call(instance);
-        else return this.isInventoryOpen() && ModConfig.HANDLER.instance().inventoryCraftingGrid ?
-                CRAFTING_INVENTORY_BACKGROUND :
-                original.call(instance);
-    }
 }

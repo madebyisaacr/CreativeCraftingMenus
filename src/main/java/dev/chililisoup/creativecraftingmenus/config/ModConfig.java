@@ -26,9 +26,6 @@ public class ModConfig {
                     .build())
             .build();
 
-    @SerialEntry(comment = "Adds a 2x2 crafting grid to the creative menu's survival inventory")
-    public boolean inventoryCraftingGrid = true;
-
     @SerialEntry(comment = "Spacing around the creative menu crafting tabs")
     public int tabSpacingX = 4;
 
@@ -54,18 +51,6 @@ public class ModConfig {
                 .title(name)
                 .category(ConfigCategory.createBuilder()
                         .name(name)
-                        .option(Option.<Boolean>createBuilder()
-                                .name(Component.translatable("creative_crafting_menus.config.inventoryCraftingGrid"))
-                                .description(OptionDescription.of(Component.translatable("creative_crafting_menus.config.inventoryCraftingGrid.desc")))
-                                .binding(
-                                        HANDLER.defaults().inventoryCraftingGrid,
-                                        () -> this.inventoryCraftingGrid,
-                                        newVal -> {
-                                            this.inventoryCraftingGrid = newVal;
-                                            HANDLER.save();
-                                        })
-                                .controller(TickBoxControllerBuilder::create)
-                                .build())
                         .option(Option.<Integer>createBuilder()
                                 .name(Component.translatable("creative_crafting_menus.config.tabSpacingX"))
                                 .description(OptionDescription.of(Component.translatable("creative_crafting_menus.config.tabSpacingX.desc")))
