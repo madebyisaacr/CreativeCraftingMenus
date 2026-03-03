@@ -1,7 +1,9 @@
 package dev.chililisoup.creativecraftingmenus.gui;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
+import net.minecraft.resources.Identifier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -39,6 +41,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
     private static final int ITEM_WIDTH = 16;
     private static final int ITEM_HEIGHT = 18;
 
+    private static final Identifier DECORATED_POT_SLOT_SELECTED = CreativeCraftingMenus.id("widget/decorated_pot_slot_selected");
     private static final int SLOT_SIZE = 18;
     private static final int SLOT_VISUAL_SIZE = 16;
     private static final int SLOT_VISUAL_OFFSET = (SLOT_SIZE - SLOT_VISUAL_SIZE) / 2;  // 1, centers 16 in 18
@@ -109,16 +112,23 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         for (int i = 0; i < 4; i++) {
             int x = screen.leftPos + SLOT_X[i];
             int y = screen.topPos + SLOT_Y[i];
-            boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + SLOT_SIZE && mouseY < y + SLOT_SIZE;
-            boolean selected = i == this.selectedSlotIndex;
             int vx = x + SLOT_VISUAL_OFFSET;
             int vy = y + SLOT_VISUAL_OFFSET;
+            boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + SLOT_SIZE && mouseY < y + SLOT_SIZE;
+            boolean selected = i == this.selectedSlotIndex;
             if (selected) {
-                guiGraphics.fill(vx, vy, vx + SLOT_VISUAL_SIZE, vy + SLOT_VISUAL_SIZE, 0xFF6E82A3);  // selected: #6E82A3
-            } else if (hovered) {
-                guiGraphics.fill(vx, vy, vx + SLOT_VISUAL_SIZE, vy + SLOT_VISUAL_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
+                guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    DECORATED_POT_SLOT_SELECTED,
+                    x,
+                    y,
+                    18,
+                    18
+                );
             }
             if (hovered) {
+                guiGraphics.fill(vx, vy, vx + SLOT_VISUAL_SIZE, vy + SLOT_VISUAL_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
+
                 List<Component> tooltip = new ArrayList<>();
                 tooltip.add(Component.translatable(SLOT_KEYS[i]));
                 Item sherd = this.slotSherds[i];
