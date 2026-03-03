@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -83,6 +84,27 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         }
 
         this.gridContents = getGridContents();
+    }
+
+    private void loadSherdsFromPot(ItemStack stack) {
+        if (!stack.is(Items.DECORATED_POT)) return;
+        PotDecorations decorations = stack.get(DataComponents.POT_DECORATIONS);
+        if (decorations == null) {
+            for (int i = 0; i < 4; i++) this.slotSherds[i] = null;
+        } else {
+            // slotSherds order: front, left, right, back
+            this.slotSherds[0] = itemIfSherd(decorations.front().orElse(null));
+            this.slotSherds[1] = itemIfSherd(decorations.left().orElse(null));
+            this.slotSherds[2] = itemIfSherd(decorations.right().orElse(null));
+            this.slotSherds[3] = itemIfSherd(decorations.back().orElse(null));
+        }
+        this.selectedIndex = getGridIndexForSlotSherd(this.slotSherds[this.selectedSlotIndex]);
+        this.gridContents = getGridContents();
+    }
+
+    private static @Nullable Item itemIfSherd(Item item) {
+        // BRICK is used for blank sides in PotDecorations; any other item is a sherd
+        return (item == null || item == Items.BRICK) ? null : item;
     }
 
     private ItemStack createDecoratedPotItemStack() {
@@ -349,7 +371,11 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
             this.addSlot(new Slot(this.decoratedPotSlot, 0, 162, 57) {
                 @Override
                 public boolean mayPlace(@NotNull ItemStack stack) {
-                    // Do not allow placing anything into this slot.
+                    if (stack.is(Items.DECORATED_POT)) {
+                        this.container.setItem(0, stack.copyWithCount(1));
+                        DecoratedPotsMenuTab.this.loadSherdsFromPot(stack);
+                        return false;
+                    }
                     return false;
                 }
 
@@ -370,8 +396,14 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
 
         @Override
         public @NotNull ItemStack quickMoveFromInventory(@NotNull Player player, int slotIndex) {
-            // For now, this tab does not interact with inventory items.
-            // Returning EMPTY means shift-clicking from inventory won't move items into this tab.
+            Slot slot = this.player.inventoryMenu.slots.get(slotIndex);
+            if (!slot.hasItem()) return ItemStack.EMPTY;
+
+            ItemStack slotStack = slot.getItem();
+            if (slotStack.is(Items.DECORATED_POT)) {
+                this.decoratedPotSlot.setItem(0, slotStack.copyWithCount(1));
+                DecoratedPotsMenuTab.this.loadSherdsFromPot(slotStack);
+            }
             return ItemStack.EMPTY;
         }
     }
