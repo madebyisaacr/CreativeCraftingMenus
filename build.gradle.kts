@@ -41,8 +41,9 @@ val requiredJava = when {
 }
 
 loom {
-    fabricModJsonPath = project.file("build/resources/main/fabric.mod.json") // Useful for interface injection
-    accessWidenerPath = project.file("build/resources/main/${mod.id}.classtweaker")
+    // Use source paths - build/resources/main doesn't exist during configuration (Stonecutter multi-version)
+    fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
+    accessWidenerPath = rootProject.file("src/main/resources/${mod.id}.classtweaker")
 
     runConfigs.all {
         ideConfigGenerated(false)
