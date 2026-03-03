@@ -18,6 +18,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
+import net.minecraft.world.level.block.entity.PotDecorations;
 
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
@@ -81,6 +83,26 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         }
 
         this.gridContents = getGridContents();
+    }
+
+    private ItemStack createDecoratedPotItemStack() {
+        Item front = this.slotSherds[0];
+        Item left = this.slotSherds[1];
+        Item right = this.slotSherds[2];
+        Item back = this.slotSherds[3];
+
+        boolean anySherd = front != null || left != null || right != null || back != null;
+        if (!anySherd) {
+            return Items.DECORATED_POT.getDefaultInstance();
+        }
+
+        Item backItem = back != null ? back : Items.BRICK;
+        Item leftItem = left != null ? left : Items.BRICK;
+        Item rightItem = right != null ? right : Items.BRICK;
+        Item frontItem = front != null ? front : Items.BRICK;
+
+        PotDecorations potDecorations = new PotDecorations(backItem, leftItem, rightItem, frontItem);
+        return DecoratedPotBlockEntity.createDecoratedPotItem(potDecorations);
     }
 
     private List<GridItem> getGridContents() {
@@ -252,6 +274,9 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
             this.selectedIndex = clicked;
             this.slotSherds[this.selectedSlotIndex] = clicked == 0 ? null : this.sherdItems.get(clicked - 1);
             this.gridContents = getGridContents();
+            if (this.menu != null) {
+                this.menu.decoratedPotSlot.setItem(0, this.createDecoratedPotItemStack());
+            }
             return true;
         }
 
@@ -316,7 +341,7 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         }
     }
 
-    public static class DecoratedPotsTabMenu extends CreativeMenuTab.CreativeTabMenu<DecoratedPotsTabMenu> {
+    public class DecoratedPotsTabMenu extends CreativeMenuTab.CreativeTabMenu<DecoratedPotsTabMenu> {
         private final ResultContainer decoratedPotSlot = new ResultContainer();
 
         DecoratedPotsTabMenu(Player player) {
@@ -330,12 +355,12 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
 
                 @Override
                 public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
-                    // Immediately refill with a new decorated pot when taken.
-                    this.container.setItem(0, Items.DECORATED_POT.getDefaultInstance());
+                    // Immediately refill with a decorated pot matching the selected sherds.
+                    this.container.setItem(0, DecoratedPotsMenuTab.this.createDecoratedPotItemStack());
                 }
             });
-            // Initialize with a decorated pot.
-            this.decoratedPotSlot.setItem(0, Items.DECORATED_POT.getDefaultInstance());
+            // Initialize with a decorated pot matching the selected sherds (or default if none).
+            this.decoratedPotSlot.setItem(0, DecoratedPotsMenuTab.this.createDecoratedPotItemStack());
         }
 
         @Override
