@@ -75,6 +75,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
             //?}
             ItemTags.SIGNS,
             ItemTags.HANGING_SIGNS,
+            ItemTags.WOODEN_SHELVES,
             ConventionalItemTags.POTIONS
     );
 
@@ -187,7 +188,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
                     16,
                     18
             );
-            guiGraphics.renderItem(page.icon, x, y + 1);
+            guiGraphics.renderItem(page.getIcon(this), x, y + 1);
         }
 
         this.renderPageContents(screen, guiGraphics, mouseX, mouseY);
@@ -439,6 +440,34 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         return List.of(Page.ITEM_MATERIAL);
     }
 
+    private ItemStack getTrimPatternTabIcon() {
+        if (this.menu == null) return Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance();
+        ArmorTrim trim = this.menu.getSlot(1).getItem().get(DataComponents.TRIM);
+        if (trim == null) return Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance();
+        TrimPattern patternValue = trim.pattern().value();
+        for (Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack> pair : this.trimPatterns) {
+            if (pair.getFirst() != null && pair.getFirst().value() == patternValue) {
+                ItemStack icon = pair.getSecond();
+                return icon.isEmpty() ? Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance() : icon;
+            }
+        }
+        return Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance();
+    }
+
+    private ItemStack getTrimMaterialTabIcon() {
+        if (this.menu == null) return Items.IRON_INGOT.getDefaultInstance();
+        ArmorTrim trim = this.menu.getSlot(1).getItem().get(DataComponents.TRIM);
+        TrimMaterial materialValue = trim != null ? trim.material().value() : null;
+        if (materialValue == null) return Items.IRON_INGOT.getDefaultInstance();
+        for (Pair<Holder.@Nullable Reference<@NotNull TrimMaterial>, ItemStack> pair : this.trimMaterials) {
+            if (pair.getFirst() != null && pair.getFirst().value() == materialValue) {
+                ItemStack icon = pair.getSecond();
+                return icon.isEmpty() ? Items.IRON_INGOT.getDefaultInstance() : icon;
+            }
+        }
+        return Items.IRON_INGOT.getDefaultInstance();
+    }
+
     private boolean isScrollBarActive() {
         return this.pageContents.size() > 12;
     }
@@ -554,38 +583,42 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private enum Page {
         TRIM_PATTERN(
                 Component.translatable("container.creative_crafting_menus.smithing.trim_pattern"),
-                Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance(),
+                SmithingMenuTab::getTrimPatternTabIcon,
                 SmithingMenuTab::getTrimPatternPageContents,
                 SmithingMenuTab::getTrimPatternPageClickActions
         ),
         TRIM_MATERIAL(
                 Component.translatable("container.creative_crafting_menus.smithing.trim_material"),
-                Items.AMETHYST_SHARD.getDefaultInstance(),
+                SmithingMenuTab::getTrimMaterialTabIcon,
                 SmithingMenuTab::getTrimMaterialPageContents,
                 SmithingMenuTab::getTrimMaterialPageClickActions
         ),
         ITEM_MATERIAL(
                 Component.translatable("container.creative_crafting_menus.smithing.item_material"),
-                Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE.getDefaultInstance(),
+                tab -> Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE.getDefaultInstance(),
                 SmithingMenuTab::getItemMaterialPageContents,
                 SmithingMenuTab::getItemMaterialPageClickActions
         );
 
         private final Component tooltip;
-        private final ItemStack icon;
+        private final Function<SmithingMenuTab, ItemStack> iconSupplier;
         private final Function<SmithingMenuTab, List<PageItem>> contentsSupplier;
         private final Function<SmithingMenuTab, List<Runnable>> clickActionSupplier;
 
         Page(
                 final Component tooltip,
-                final ItemStack icon,
+                final Function<SmithingMenuTab, ItemStack> iconSupplier,
                 final Function<SmithingMenuTab, List<PageItem>> contentsSupplier,
                 final Function<SmithingMenuTab, List<Runnable>> clickActionSupplier
         ) {
             this.tooltip = tooltip;
-            this.icon = icon;
+            this.iconSupplier = iconSupplier;
             this.clickActionSupplier = clickActionSupplier;
             this.contentsSupplier = contentsSupplier;
+        }
+
+        private ItemStack getIcon(SmithingMenuTab tab) {
+            return this.iconSupplier.apply(tab);
         }
 
         private interface RenderFunction {
