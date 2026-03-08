@@ -3,6 +3,7 @@ package dev.chililisoup.creativecraftingmenus.reg;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.gui.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.impl.client.itemgroup.FabricCreativeGuiComponents;
 import net.minecraft.core.Registry;
@@ -119,6 +120,36 @@ public class CreativeMenuTabs {
                     )));
             filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME, Component.literal("Filled Chiseled Bookshelf"));
             entries.accept(filledChiseledBookshelf);
+
+            // Lit copper bulbs
+            addLitCopperBulb(entries, Items.COPPER_BULB, "Lit Copper Bulb");
+            addLitCopperBulb(entries, Items.EXPOSED_COPPER_BULB, "Lit Exposed Copper Bulb");
+            addLitCopperBulb(entries, Items.WEATHERED_COPPER_BULB, "Lit Weathered Copper Bulb");
+            addLitCopperBulb(entries, Items.OXIDIZED_COPPER_BULB, "Lit Oxidized Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "Waxed Lit Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "Waxed Lit Exposed Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "Waxed Lit Weathered Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "Waxed Lit Oxidized Copper Bulb");
         });
+
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
+            // Waxed lit copper bulbs
+            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "Waxed Lit Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "Waxed Lit Exposed Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "Waxed Lit Weathered Copper Bulb");
+            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "Waxed Lit Oxidized Copper Bulb");
+        });
+    }
+
+    private static void addLitCopperBulb(
+            FabricItemGroupEntries entries,
+            net.minecraft.world.item.Item item,
+            String name
+    ) {
+        ItemStack stack = new ItemStack(item);
+        stack.set(DataComponents.BLOCK_STATE,
+                BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, true));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        entries.accept(stack);
     }
 }
