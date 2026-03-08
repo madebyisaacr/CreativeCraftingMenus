@@ -9,6 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -95,19 +96,22 @@ public class CreativeMenuTabs {
             ItemStack unlitCampfire = new ItemStack(Items.CAMPFIRE);
             unlitCampfire.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
-            unlitCampfire.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.unlit_campfire"));
+            unlitCampfire.set(DataComponents.CUSTOM_NAME,
+                    Component.translatable("creative_crafting_menus.item.unlit_campfire").withStyle(Style.EMPTY.withItalic(false)));
             entries.addAfter(Items.CAMPFIRE, List.of(unlitCampfire));
 
             ItemStack unlitSoulCampfire = new ItemStack(Items.SOUL_CAMPFIRE);
             unlitSoulCampfire.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
-            unlitSoulCampfire.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.unlit_soul_campfire"));
+            unlitSoulCampfire.set(DataComponents.CUSTOM_NAME,
+                    Component.translatable("creative_crafting_menus.item.unlit_soul_campfire").withStyle(Style.EMPTY.withItalic(false)));
             entries.addAfter(Items.SOUL_CAMPFIRE, List.of(unlitSoulCampfire));
 
             ItemStack ominousVault = new ItemStack(Items.VAULT);
             ominousVault.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
-            ominousVault.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_vault"));
+            ominousVault.set(DataComponents.CUSTOM_NAME,
+                    Component.translatable("creative_crafting_menus.item.ominous_vault").withStyle(Style.EMPTY.withItalic(false)));
             entries.addAfter(Items.VAULT, List.of(ominousVault));
 
             ItemStack filledChiseledBookshelf = new ItemStack(Items.CHISELED_BOOKSHELF);
@@ -128,7 +132,8 @@ public class CreativeMenuTabs {
                             new ItemStack(Items.BOOK),
                             new ItemStack(Items.BOOK)
                     )));
-            filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.filled_chiseled_bookshelf"));
+            filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME,
+                    Component.translatable("creative_crafting_menus.item.filled_chiseled_bookshelf").withStyle(Style.EMPTY.withItalic(false)));
             entries.addAfter(Items.CHISELED_BOOKSHELF, List.of(filledChiseledBookshelf));
 
             // Lit copper bulbs - all as a group after last unlit bulb
@@ -147,7 +152,8 @@ public class CreativeMenuTabs {
             ItemStack ominousTrialSpawner = new ItemStack(Items.TRIAL_SPAWNER);
             ominousTrialSpawner.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
-            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_trial_spawner"));
+            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME,
+                    Component.translatable("creative_crafting_menus.item.ominous_trial_spawner").withStyle(Style.EMPTY.withItalic(false)));
             entries.addAfter(Items.TRIAL_SPAWNER, List.of(ominousTrialSpawner));
         });
 
@@ -168,7 +174,8 @@ public class CreativeMenuTabs {
         ItemStack stack = new ItemStack(item);
         stack.set(DataComponents.BLOCK_STATE,
                 BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, true));
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(translationKey));
+        stack.set(DataComponents.CUSTOM_NAME,
+                Component.translatable(translationKey).withStyle(Style.EMPTY.withItalic(false)));
         return stack;
     }
 }
