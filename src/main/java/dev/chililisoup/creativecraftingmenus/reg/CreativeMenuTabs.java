@@ -77,13 +77,13 @@ public class CreativeMenuTabs {
             ItemStack unlitCampfire = new ItemStack(Items.CAMPFIRE);
             unlitCampfire.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
-            unlitCampfire.set(DataComponents.CUSTOM_NAME, Component.literal("Unlit Campfire"));
+            unlitCampfire.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.unlit_campfire"));
             entries.accept(unlitCampfire);
 
             ItemStack unlitSoulCampfire = new ItemStack(Items.SOUL_CAMPFIRE);
             unlitSoulCampfire.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
-            unlitSoulCampfire.set(DataComponents.CUSTOM_NAME, Component.literal("Unlit Soul Campfire"));
+            unlitSoulCampfire.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.unlit_soul_campfire"));
             entries.accept(unlitSoulCampfire);
         });
 
@@ -91,13 +91,13 @@ public class CreativeMenuTabs {
             ItemStack ominousVault = new ItemStack(Items.VAULT);
             ominousVault.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
-            ominousVault.set(DataComponents.CUSTOM_NAME, Component.literal("Ominous Vault"));
+            ominousVault.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_vault"));
             entries.accept(ominousVault);
 
             ItemStack ominousTrialSpawner = new ItemStack(Items.TRIAL_SPAWNER);
             ominousTrialSpawner.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
-            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.literal("Ominous Trial Spawner"));
+            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_trial_spawner"));
             entries.accept(ominousTrialSpawner);
 
             ItemStack filledChiseledBookshelf = new ItemStack(Items.CHISELED_BOOKSHELF);
@@ -118,38 +118,38 @@ public class CreativeMenuTabs {
                             new ItemStack(Items.BOOK),
                             new ItemStack(Items.BOOK)
                     )));
-            filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME, Component.literal("Filled Chiseled Bookshelf"));
+            filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.filled_chiseled_bookshelf"));
             entries.accept(filledChiseledBookshelf);
 
             // Lit copper bulbs
-            addLitCopperBulb(entries, Items.COPPER_BULB, "Lit Copper Bulb");
-            addLitCopperBulb(entries, Items.EXPOSED_COPPER_BULB, "Lit Exposed Copper Bulb");
-            addLitCopperBulb(entries, Items.WEATHERED_COPPER_BULB, "Lit Weathered Copper Bulb");
-            addLitCopperBulb(entries, Items.OXIDIZED_COPPER_BULB, "Lit Oxidized Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "Waxed Lit Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "Waxed Lit Exposed Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "Waxed Lit Weathered Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "Waxed Lit Oxidized Copper Bulb");
+            addLitCopperBulb(entries, Items.COPPER_BULB, "creative_crafting_menus.item.lit_copper_bulb");
+            addLitCopperBulb(entries, Items.EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_exposed_copper_bulb");
+            addLitCopperBulb(entries, Items.WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_weathered_copper_bulb");
+            addLitCopperBulb(entries, Items.OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_oxidized_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb");
         });
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
-            // Waxed lit copper bulbs
-            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "Waxed Lit Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "Waxed Lit Exposed Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "Waxed Lit Weathered Copper Bulb");
-            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "Waxed Lit Oxidized Copper Bulb");
+            // Lit waxed copper bulbs
+            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb");
+            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb");
         });
     }
 
     private static void addLitCopperBulb(
             FabricItemGroupEntries entries,
             net.minecraft.world.item.Item item,
-            String name
+            String translationKey
     ) {
         ItemStack stack = new ItemStack(item);
         stack.set(DataComponents.BLOCK_STATE,
                 BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, true));
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(translationKey));
         entries.accept(stack);
     }
 }
