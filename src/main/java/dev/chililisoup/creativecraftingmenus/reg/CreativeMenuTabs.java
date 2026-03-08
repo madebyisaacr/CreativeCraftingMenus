@@ -84,5 +84,19 @@ public class CreativeMenuTabs {
             unlitSoulCampfire.set(DataComponents.CUSTOM_NAME, Component.literal("Unlit Soul Campfire"));
             entries.accept(unlitSoulCampfire);
         });
+
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
+            ItemStack ominousVault = new ItemStack(Items.VAULT);
+            ominousVault.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
+            ominousVault.set(DataComponents.CUSTOM_NAME, Component.literal("Ominous Vault"));
+            entries.accept(ominousVault);
+
+            ItemStack ominousTrialSpawner = new ItemStack(Items.TRIAL_SPAWNER);
+            ominousTrialSpawner.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
+            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.literal("Ominous Trial Spawner"));
+            entries.accept(ominousTrialSpawner);
+        });
     }
 }
