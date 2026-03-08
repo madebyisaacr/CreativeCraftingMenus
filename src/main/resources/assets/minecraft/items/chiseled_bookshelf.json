@@ -1,0 +1,119 @@
+{
+	"model": {
+		"type": "minecraft:composite",
+		"models": [
+			{
+				"type": "minecraft:model",
+				"model": "minecraft:block/chiseled_bookshelf"
+			},
+			{
+				"type": "select",
+				"property": "block_state",
+				"block_state_property": "slot_0_occupied",
+				"cases": [
+					{
+						"when": "true",
+						"model": {
+							"type": "minecraft:model",
+							"model": "minecraft:block/chiseled_bookshelf_occupied_slot_top_left"
+						}
+					}
+				],
+				"fallback": {
+					"type": "minecraft:model",
+					"model": "minecraft:block/chiseled_bookshelf_empty_slot_top_left"
+				}
+			},
+			{
+				"type": "select",
+				"property": "block_state",
+				"block_state_property": "slot_1_occupied",
+				"cases": [
+					{
+						"when": "true",
+						"model": {
+							"type": "minecraft:model",
+							"model": "minecraft:block/chiseled_bookshelf_occupied_slot_top_mid"
+						}
+					}
+				],
+				"fallback": {
+					"type": "minecraft:model",
+					"model": "minecraft:block/chiseled_bookshelf_empty_slot_top_mid"
+				}
+			},
+			{
+				"type": "select",
+				"property": "block_state",
+				"block_state_property": "slot_2_occupied",
+				"cases": [
+					{
+						"when": "true",
+						"model": {
+							"type": "minecraft:model",
+							"model": "minecraft:block/chiseled_bookshelf_occupied_slot_top_right"
+						}
+					}
+				],
+				"fallback": {
+					"type": "minecraft:model",
+					"model": "minecraft:block/chiseled_bookshelf_empty_slot_top_right"
+				}
+			},
+			{
+				"type": "select",
+				"property": "block_state",
+				"block_state_property": "slot_3_occupied",
+				"cases": [
+					{
+						"when": "true",
+						"model": {
+							"type": "minecraft:model",
+							"model": "minecraft:block/chiseled_bookshelf_occupied_slot_bottom_left"
+						}
+					}
+				],
+				"fallback": {
+					"type": "minecraft:model",
+					"model": "minecraft:block/chiseled_bookshelf_empty_slot_bottom_left"
+				}
+			},
+			{
+				"type": "select",
+				"property": "block_state",
+				"block_state_property": "slot_4_occupied",
+				"cases": [
+					{
+						"when": "true",
+						"model": {
+							"type": "minecraft:model",
+							"model": "minecraft:block/chiseled_bookshelf_occupied_slot_bottom_mid"
+						}
+					}
+				],
+				"fallback": {
+					"type": "minecraft:model",
+					"model": "minecraft:block/chiseled_bookshelf_empty_slot_bottom_mid"
+				}
+			},
+			{
+				"type": "select",
+				"property": "block_state",
+				"block_state_property": "slot_5_occupied",
+				"cases": [
+					{
+						"when": "true",
+						"model": {
+							"type": "minecraft:model",
+							"model": "minecraft:block/chiseled_bookshelf_occupied_slot_bottom_right"
+						}
+					}
+				],
+				"fallback": {
+					"type": "minecraft:model",
+					"model": "minecraft:block/chiseled_bookshelf_empty_slot_bottom_right"
+				}
+			}
+		]
+	}
+}

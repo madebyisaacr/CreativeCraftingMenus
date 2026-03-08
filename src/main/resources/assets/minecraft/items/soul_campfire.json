@@ -1,0 +1,27 @@
+{
+	"model": {
+		"type": "select",
+		"property": "block_state",
+		"block_state_property": "lit",
+		"cases": [
+			{
+				"when": "true",
+				"model": {
+					"type": "model",
+					"model": "item/soul_campfire"
+				}
+			},
+			{
+				"when": "false",
+				"model": {
+					"type": "model",
+					"model": "item/soul_campfire_unlit"
+				}
+			}
+		],
+		"fallback": {
+			"type": "model",
+			"model": "item/soul_campfire"
+		}
+	}
+}

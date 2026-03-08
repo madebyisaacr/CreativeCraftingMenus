@@ -1,0 +1,27 @@
+{
+	"model": {
+		"type": "select",
+		"property": "block_state",
+		"block_state_property": "lit",
+		"cases": [
+			{
+				"when": "true",
+				"model": {
+					"type": "model",
+					"model": "minecraft:block/exposed_copper_bulb_lit"
+				}
+			},
+			{
+				"when": "false",
+				"model": {
+					"type": "model",
+					"model": "minecraft:block/exposed_copper_bulb"
+				}
+			}
+		],
+		"fallback": {
+			"type": "model",
+			"model": "minecraft:block/exposed_copper_bulb"
+		}
+	}
+}
