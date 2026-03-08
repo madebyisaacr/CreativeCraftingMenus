@@ -3,7 +3,6 @@ package dev.chililisoup.creativecraftingmenus.reg;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.gui.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.impl.client.itemgroup.FabricCreativeGuiComponents;
 import net.minecraft.core.Registry;
@@ -73,32 +72,43 @@ public class CreativeMenuTabs {
     public static void init() {
         ClientPlayConnectionEvents.DISCONNECT.register((a, b) -> MENU_TABS.forEach(CreativeMenuTab::dispose));
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.NATURAL_BLOCKS).register(entries -> {
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
+            entries.addAfter(Items.COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.COPPER_BULB, "creative_crafting_menus.item.lit_copper_bulb")));
+            entries.addAfter(Items.EXPOSED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_exposed_copper_bulb")));
+            entries.addAfter(Items.WEATHERED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_weathered_copper_bulb")));
+            entries.addAfter(Items.OXIDIZED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_oxidized_copper_bulb")));
+            entries.addAfter(Items.WAXED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb")));
+            entries.addAfter(Items.WAXED_EXPOSED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb")));
+            entries.addAfter(Items.WAXED_WEATHERED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb")));
+            entries.addAfter(Items.WAXED_OXIDIZED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb")));
+        });
+
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
             ItemStack unlitCampfire = new ItemStack(Items.CAMPFIRE);
             unlitCampfire.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
             unlitCampfire.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.unlit_campfire"));
-            entries.accept(unlitCampfire);
+            entries.addAfter(Items.CAMPFIRE, List.of(unlitCampfire));
 
             ItemStack unlitSoulCampfire = new ItemStack(Items.SOUL_CAMPFIRE);
             unlitSoulCampfire.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
             unlitSoulCampfire.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.unlit_soul_campfire"));
-            entries.accept(unlitSoulCampfire);
-        });
+            entries.addAfter(Items.SOUL_CAMPFIRE, List.of(unlitSoulCampfire));
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
             ItemStack ominousVault = new ItemStack(Items.VAULT);
             ominousVault.set(DataComponents.BLOCK_STATE,
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
             ominousVault.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_vault"));
-            entries.accept(ominousVault);
-
-            ItemStack ominousTrialSpawner = new ItemStack(Items.TRIAL_SPAWNER);
-            ominousTrialSpawner.set(DataComponents.BLOCK_STATE,
-                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
-            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_trial_spawner"));
-            entries.accept(ominousTrialSpawner);
+            entries.addAfter(Items.VAULT, List.of(ominousVault));
 
             ItemStack filledChiseledBookshelf = new ItemStack(Items.CHISELED_BOOKSHELF);
             filledChiseledBookshelf.set(DataComponents.BLOCK_STATE,
@@ -119,30 +129,39 @@ public class CreativeMenuTabs {
                             new ItemStack(Items.BOOK)
                     )));
             filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.filled_chiseled_bookshelf"));
-            entries.accept(filledChiseledBookshelf);
+            entries.addAfter(Items.CHISELED_BOOKSHELF, List.of(filledChiseledBookshelf));
 
-            // Lit copper bulbs
-            addLitCopperBulb(entries, Items.COPPER_BULB, "creative_crafting_menus.item.lit_copper_bulb");
-            addLitCopperBulb(entries, Items.EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_exposed_copper_bulb");
-            addLitCopperBulb(entries, Items.WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_weathered_copper_bulb");
-            addLitCopperBulb(entries, Items.OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_oxidized_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb");
+            // Lit copper bulbs - all as a group after last unlit bulb
+            entries.addAfter(Items.WAXED_OXIDIZED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.COPPER_BULB, "creative_crafting_menus.item.lit_copper_bulb"),
+                    createLitCopperBulbStack(Items.EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_exposed_copper_bulb"),
+                    createLitCopperBulbStack(Items.WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_weathered_copper_bulb"),
+                    createLitCopperBulbStack(Items.OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_oxidized_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb")));
+        });
+
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.SPAWN_EGGS).register(entries -> {
+            ItemStack ominousTrialSpawner = new ItemStack(Items.TRIAL_SPAWNER);
+            ominousTrialSpawner.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
+            ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.translatable("creative_crafting_menus.item.ominous_trial_spawner"));
+            entries.addAfter(Items.TRIAL_SPAWNER, List.of(ominousTrialSpawner));
         });
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
-            // Lit waxed copper bulbs
-            addLitCopperBulb(entries, Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb");
-            addLitCopperBulb(entries, Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb");
+            // Lit waxed copper bulbs - as a group after last unlit waxed bulb
+            entries.addAfter(Items.WAXED_OXIDIZED_COPPER_BULB, List.of(
+                    createLitCopperBulbStack(Items.WAXED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_EXPOSED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_exposed_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_WEATHERED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_weathered_copper_bulb"),
+                    createLitCopperBulbStack(Items.WAXED_OXIDIZED_COPPER_BULB, "creative_crafting_menus.item.lit_waxed_oxidized_copper_bulb")));
         });
     }
 
-    private static void addLitCopperBulb(
-            FabricItemGroupEntries entries,
+    private static ItemStack createLitCopperBulbStack(
             net.minecraft.world.item.Item item,
             String translationKey
     ) {
@@ -150,6 +169,6 @@ public class CreativeMenuTabs {
         stack.set(DataComponents.BLOCK_STATE,
                 BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, true));
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable(translationKey));
-        entries.accept(stack);
+        return stack;
     }
 }
