@@ -13,6 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -97,6 +98,27 @@ public class CreativeMenuTabs {
                     BlockItemStateProperties.EMPTY.with(BlockStateProperties.OMINOUS, true));
             ominousTrialSpawner.set(DataComponents.CUSTOM_NAME, Component.literal("Ominous Trial Spawner"));
             entries.accept(ominousTrialSpawner);
+
+            ItemStack filledChiseledBookshelf = new ItemStack(Items.CHISELED_BOOKSHELF);
+            filledChiseledBookshelf.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY
+                            .with(BlockStateProperties.SLOT_0_OCCUPIED, true)
+                            .with(BlockStateProperties.SLOT_1_OCCUPIED, true)
+                            .with(BlockStateProperties.SLOT_2_OCCUPIED, true)
+                            .with(BlockStateProperties.SLOT_3_OCCUPIED, true)
+                            .with(BlockStateProperties.SLOT_4_OCCUPIED, true)
+                            .with(BlockStateProperties.SLOT_5_OCCUPIED, true));
+            filledChiseledBookshelf.set(DataComponents.CONTAINER,
+                    ItemContainerContents.fromItems(List.of(
+                            new ItemStack(Items.BOOK),
+                            new ItemStack(Items.BOOK),
+                            new ItemStack(Items.BOOK),
+                            new ItemStack(Items.BOOK),
+                            new ItemStack(Items.BOOK),
+                            new ItemStack(Items.BOOK)
+                    )));
+            filledChiseledBookshelf.set(DataComponents.CUSTOM_NAME, Component.literal("Filled Chiseled Bookshelf"));
+            entries.accept(filledChiseledBookshelf);
         });
     }
 }
