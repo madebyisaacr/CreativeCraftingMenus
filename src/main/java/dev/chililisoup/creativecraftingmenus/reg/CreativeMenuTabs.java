@@ -3,13 +3,18 @@ package dev.chililisoup.creativecraftingmenus.reg;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.gui.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.impl.client.itemgroup.FabricCreativeGuiComponents;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -65,5 +70,19 @@ public class CreativeMenuTabs {
 
     public static void init() {
         ClientPlayConnectionEvents.DISCONNECT.register((a, b) -> MENU_TABS.forEach(CreativeMenuTab::dispose));
+
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.NATURAL_BLOCKS).register(entries -> {
+            ItemStack unlitCampfire = new ItemStack(Items.CAMPFIRE);
+            unlitCampfire.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
+            unlitCampfire.set(DataComponents.CUSTOM_NAME, Component.literal("Unlit Campfire"));
+            entries.accept(unlitCampfire);
+
+            ItemStack unlitSoulCampfire = new ItemStack(Items.SOUL_CAMPFIRE);
+            unlitSoulCampfire.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.LIT, false));
+            unlitSoulCampfire.set(DataComponents.CUSTOM_NAME, Component.literal("Unlit Soul Campfire"));
+            entries.accept(unlitSoulCampfire);
+        });
     }
 }
