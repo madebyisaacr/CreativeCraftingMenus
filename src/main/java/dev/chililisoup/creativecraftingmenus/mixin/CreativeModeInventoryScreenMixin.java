@@ -139,7 +139,6 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     private void getMenuTabY(CreativeModeTab tab, CallbackInfoReturnable<Integer> cir) {
         if (tab instanceof CreativeMenuTab) {
             int tabSpacingY = ModConfig.HANDLER.instance().tabSpacingY;
-            // TODO: Filter once every time the config changes instead of every damn time this method is called
             List<CreativeMenuTab<?>> filtered = CreativeMenuTabs.MENU_TABS.stream().filter(CreativeMenuTab::shouldDisplay).toList();
             int count = filtered.size();
             int index = filtered.indexOf(tab);
@@ -186,7 +185,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
                     color
             );
             guiGraphics.drawString(font, this.playerInventoryTitle, 9, this.imageHeight - 94, color, bl);
-        } else original.call(guiGraphics, font, title, x, y, color, bl);
+        } else {
+            original.call(guiGraphics, font, title, x, y, color, bl);
+        }
     }
 
     @Inject(method = "renderBg", at = @At("TAIL"))
