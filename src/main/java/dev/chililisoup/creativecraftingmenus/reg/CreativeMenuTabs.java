@@ -37,11 +37,6 @@ public class CreativeMenuTabs {
                         Items.ENCHANTING_TABLE::getDefaultInstance
                 ),
                 register(
-                        LoomMenuTab::new,
-                        "loom",
-                        Items.LOOM::getDefaultInstance
-                ),
-                register(
                         CraftingMenuTab::new,
                         "crafting",
                         Items.CRAFTING_TABLE::getDefaultInstance
@@ -50,6 +45,11 @@ public class CreativeMenuTabs {
                         SmithingMenuTab::new,
                         "smithing",
                         Items.SMITHING_TABLE::getDefaultInstance
+                ),
+                register(
+                        LoomMenuTab::new,
+                        "loom",
+                        Items.LOOM::getDefaultInstance
                 ),
                 register(
                         DecoratedPotsMenuTab::new,
