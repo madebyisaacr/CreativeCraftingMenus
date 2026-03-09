@@ -155,7 +155,29 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         this.renderScrollBar(screen, guiGraphics, mouseX, mouseY);
         this.renderGrid(screen, guiGraphics, mouseX, mouseY);
         this.renderSelectAllButton(screen, guiGraphics, mouseX, mouseY);
+        this.renderDecoratedPotPreview(screen, guiGraphics);
         this.renderSlotButtons(screen, guiGraphics, mouseX, mouseY);
+    }
+
+    private void renderDecoratedPotPreview(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics) {
+        if (this.menu == null) return;
+
+        ItemStack potStack = this.menu.decoratedPotSlot.getItem(0);
+        if (potStack.isEmpty()) {
+            potStack = this.createDecoratedPotItemStack();
+        }
+
+        // Target area: 40x40 at (150, 9) relative to the container origin.
+        int areaX = screen.leftPos + 150;
+        int areaY = screen.topPos + 9;
+        float scale = 40F / 16F; // Default item render is 16x16
+
+        guiGraphics.pose().pushMatrix();
+        // Translate to the center of the 40x40 area, then render the item centered.
+        guiGraphics.pose().translate(areaX + 20F, areaY + 20F);
+        guiGraphics.pose().scale(scale);
+        guiGraphics.renderItem(potStack, -8, -8);
+        guiGraphics.pose().popMatrix();
     }
 
     private void renderSelectAllButton(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
