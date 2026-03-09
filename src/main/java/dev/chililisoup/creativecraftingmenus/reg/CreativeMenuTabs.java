@@ -27,19 +27,24 @@ public class CreativeMenuTabs {
     static {
         MENU_TABS = List.of(
                 register(
-                        AnvilMenuTab::new,
-                        "anvil",
-                        Items.ANVIL::getDefaultInstance
+                        RenameMenuTab::new,
+                        "rename",
+                        Items.NAME_TAG::getDefaultInstance
                 ),
                 register(
-                        CraftingMenuTab::new,
-                        "crafting",
-                        Items.CRAFTING_TABLE::getDefaultInstance
+                        EnchantingMenuTab::new,
+                        "enchanting",
+                        Items.ENCHANTING_TABLE::getDefaultInstance
                 ),
                 register(
                         LoomMenuTab::new,
                         "loom",
                         Items.LOOM::getDefaultInstance
+                ),
+                register(
+                        CraftingMenuTab::new,
+                        "crafting",
+                        Items.CRAFTING_TABLE::getDefaultInstance
                 ),
                 register(
                         SmithingMenuTab::new,
