@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public abstract class BannerPresets {
     private static boolean LOADED = false;
     private static final HashMap<String, PresetGroupItem> GROUPS = new HashMap<>();
-    private static final HashMap<String, PresetGroupItem> BUILT_IN_GROUPS = new HashMap<>();
+    private static final LinkedHashMap<String, PresetGroupItem> BUILT_IN_GROUPS = new LinkedHashMap<>();
 
     public static @Nullable PresetGroupItem get(String key) {
         return GROUPS.get(key);
@@ -85,9 +85,10 @@ public abstract class BannerPresets {
         deserialize(ModConfig.HANDLER.instance().bannerPresets);
 
         Map.of(
-                "Alphabet", DefaultBannerPresets.ALPHABET,
-                "Symbols", DefaultBannerPresets.SYMBOLS,
-                "Math", DefaultBannerPresets.MATH
+                "letters", DefaultBannerPresets.LETTERS,
+                "numbers", DefaultBannerPresets.NUMBERS,
+                "symbols", DefaultBannerPresets.SYMBOLS,
+                "arrows", DefaultBannerPresets.ARROWS
         ).forEach((key, group) -> BUILT_IN_GROUPS.put(key, deserializeGroup(group)));
 
         LOADED = true;

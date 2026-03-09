@@ -475,7 +475,9 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
                     Map.@Nullable Entry<String, BannerPresets.PresetGroupItem> group = groups.get(i);
                     Component label = group != null ?
-                            Component.literal(group.getKey()) :
+                            (instance.builtInGroups ?
+                                    Component.translatable("container.creative_crafting_menus.loom.preset_group." + group.getKey()) :
+                                    Component.literal(group.getKey())) :
                             Component.translatable("container.creative_crafting_menus.loom.new_preset_group");
 
                     boolean hovered = mouseX >= left && mouseY >= y && mouseX < left + 56 && mouseY < y + 14;
@@ -528,7 +530,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
             if (instance.builtInGroups) VersionHelper.drawScrollingString(
                     guiGraphics,
-                    Component.literal(instance.selectedPresetGroup),
+                    Component.translatable("container.creative_crafting_menus.loom.preset_group." + instance.selectedPresetGroup),
                     left + 8,
                     left + 8,
                     left + 53,
