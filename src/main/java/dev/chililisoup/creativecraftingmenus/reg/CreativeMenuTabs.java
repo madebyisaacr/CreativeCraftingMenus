@@ -55,6 +55,11 @@ public class CreativeMenuTabs {
                         DecoratedPotsMenuTab::new,
                         "decorated_pots",
                         Items.DECORATED_POT::getDefaultInstance
+                ),
+                register(
+                        FireworksMenuTab::new,
+                        "fireworks",
+                        Items.FIREWORK_ROCKET::getDefaultInstance
                 )
         );
     }
