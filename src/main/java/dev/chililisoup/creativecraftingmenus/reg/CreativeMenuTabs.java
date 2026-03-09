@@ -32,14 +32,14 @@ public class CreativeMenuTabs {
                         Items.NAME_TAG::getDefaultInstance
                 ),
                 register(
-                        EnchantingMenuTab::new,
-                        "enchanting",
-                        Items.ENCHANTING_TABLE::getDefaultInstance
-                ),
-                register(
                         CraftingMenuTab::new,
                         "crafting",
                         Items.CRAFTING_TABLE::getDefaultInstance
+                ),
+                register(
+                        EnchantingMenuTab::new,
+                        "enchanting",
+                        Items.ENCHANTING_TABLE::getDefaultInstance
                 ),
                 register(
                         SmithingMenuTab::new,
