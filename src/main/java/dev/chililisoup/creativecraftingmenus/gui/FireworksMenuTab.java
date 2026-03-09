@@ -11,14 +11,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.FireworksTabMenu> {
@@ -51,7 +56,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
 
     @Override
     FireworksTabMenu createMenu(Player player) {
-        return new FireworksTabMenu(player);
+        return new FireworksTabMenu(player, this);
     }
 
     @Override
@@ -175,16 +180,19 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
         );
         if (clicked != null) {
             this.selectedColor = clicked;
+            this.updateFireworkSlot();
             return true;
         }
         int durationButton = getClickedDurationButton(mouseButtonEvent.x(), mouseButtonEvent.y());
         if (durationButton >= 0) {
             this.duration = durationButton;
+            this.updateFireworkSlot();
             return true;
         }
         FireworkExplosion.Shape clickedShape = getClickedShape(mouseButtonEvent.x(), mouseButtonEvent.y());
         if (clickedShape != null) {
             this.selectedShape = clickedShape;
+            this.updateFireworkSlot();
             return true;
         }
         int effectsButton = getClickedEffectsButton(mouseButtonEvent.x(), mouseButtonEvent.y());
@@ -197,6 +205,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
             } else {
                 this.trail = !this.trail;
             }
+            this.updateFireworkSlot();
             return true;
         }
         return false;
@@ -246,13 +255,39 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
         return -1;
     }
 
+    private ItemStack buildFireworkStack() {
+        IntList colors = new IntArrayList(new int[]{this.selectedColor.getTextureDiffuseColor()});
+        FireworkExplosion explosion = new FireworkExplosion(
+                this.selectedShape,
+                colors,
+                new IntArrayList(),
+                this.trail,
+                this.twinkle
+        );
+        Fireworks fireworks = new Fireworks(this.duration + 1, List.of(explosion));
+        ItemStack stack = Items.FIREWORK_ROCKET.getDefaultInstance();
+        stack.set(DataComponents.FIREWORKS, fireworks);
+        return stack;
+    }
+
+    private void updateFireworkSlot() {
+        if (this.menu != null) {
+            this.menu.setFireworkResult(this.buildFireworkStack());
+        }
+    }
+
+    @Override
+    public void subInit() {
+        this.updateFireworkSlot();
+    }
+
     public static class FireworksTabMenu extends CreativeMenuTab.CreativeTabMenu<FireworksTabMenu> {
-        private static final ItemStack FIREWORK_ROCKET = Items.FIREWORK_ROCKET.getDefaultInstance();
-
         private final ResultContainer fireworkSlot = new ResultContainer();
+        private final FireworksMenuTab tab;
 
-        FireworksTabMenu(Player player) {
+        FireworksTabMenu(Player player, FireworksMenuTab tab) {
             super(player);
+            this.tab = tab;
             this.addSlot(new Slot(this.fireworkSlot, 0, 166, 33) {
                 @Override
                 public boolean mayPlace(@NotNull ItemStack stack) {
@@ -262,15 +297,19 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
                 @Override
                 public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
                     super.onTake(player, stack);
-                    this.container.setItem(0, FIREWORK_ROCKET.copy());
+                    this.container.setItem(0, FireworksTabMenu.this.tab.buildFireworkStack());
                 }
             });
-            this.fireworkSlot.setItem(0, FIREWORK_ROCKET.copy());
+            this.setFireworkResult(this.tab.buildFireworkStack());
+        }
+
+        void setFireworkResult(ItemStack stack) {
+            this.fireworkSlot.setItem(0, stack);
         }
 
         @Override
         FireworksTabMenu copyWithPlayer(@NotNull Player player) {
-            return this.copyContentsTo(new FireworksTabMenu(player));
+            return this.copyContentsTo(new FireworksTabMenu(player, this.tab));
         }
 
         @Override
