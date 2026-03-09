@@ -38,6 +38,9 @@ import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROL
 import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROLLER_SPRITE;
 
 public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.EnchantingTabMenu> {
+    private static final int LIST_LEFT = 32;
+    private static final int LIST_WIDTH = 142;
+
     protected static final Identifier DELETE_BUTTON = CreativeCraftingMenus.id("widget/delete_button");
     protected static final Identifier DELETE_BUTTON_HIGHLIGHTED = CreativeCraftingMenus.id("widget/delete_button_highlighted");
     protected static final Identifier ADD_ENCHANTING_BUTTON = CreativeCraftingMenus.id("widget/add_anvil_button");
@@ -64,10 +67,10 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
         if (this.enchantSelector != null) this.screen.removeWidget(this.enchantSelector);
 
         this.enchantSelector = new DropdownSelector<>(
-                screen.leftPos + 63,
-                screen.leftPos + 51,
+                screen.leftPos + LIST_LEFT + 12,
+                screen.leftPos + LIST_LEFT,
                 screen.topPos + 14,
-                111,
+                LIST_WIDTH - 12,
                 14,
                 56
         );
@@ -111,7 +114,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
         if (this.menu == null || this.enchantSelector == null || this.menu.resultSlots.isEmpty())
             return;
 
-        int left = screen.leftPos + 51;
+        int left = screen.leftPos + LIST_LEFT;
         int top = screen.topPos + 14;
 
         ArrayList<Object2IntMap.@Nullable Entry<Holder<Enchantment>>> enchants =
@@ -130,11 +133,11 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                         enchant.getKey().value().description() :
                         Component.translatable("container.creative_crafting_menus.enchanting.add_enchantment");
 
-                boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + 123 && mouseY < y + 14;
+                boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH && mouseY < y + 14;
                 boolean addDeleteHovered = anyHovered && mouseX < left + 12;
 
                 if (enchant != null) {
-                    boolean labelHovered = anyHovered && !addDeleteHovered && mouseX < left + 103;
+                    boolean labelHovered = anyHovered && !addDeleteHovered && mouseX < left + LIST_WIDTH - 20;
                     boolean levelHovered = anyHovered && !addDeleteHovered && !labelHovered;
 
                     if (anyHovered) {
@@ -158,7 +161,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                     guiGraphics.blitSprite(
                             RenderPipelines.GUI_TEXTURED,
                             levelHovered ? BUTTON_HIGHLIGHTED : BUTTON,
-                            left + 103,
+                            left + LIST_WIDTH - 20,
                             y,
                             20,
                             14
@@ -167,7 +170,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                     guiGraphics.drawCenteredString(
                             Minecraft.getInstance().font,
                             String.valueOf(enchant.getIntValue()),
-                            left + 113,
+                            left + LIST_WIDTH - 10,
                             y + 3,
                             -1
                     );
@@ -177,7 +180,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                             label,
                             left + 15,
                             left + 15,
-                            left + 100,
+                            left + LIST_WIDTH - 23,
                             y,
                             y + 14
                     );
@@ -209,7 +212,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
         if (this.enchantSelector.visible && this.enchantSelector.open)
             return null;
 
-        int left = this.screen.leftPos + 51;
+        int left = this.screen.leftPos + LIST_LEFT;
         int top = this.screen.topPos + 14;
         double mouseX = mouseButtonEvent.x();
         double mouseY = mouseButtonEvent.y();
@@ -222,12 +225,12 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
             int y = top + (i - this.startIndex) * 14;
             Object2IntMap.@Nullable Entry<Holder<Enchantment>> enchant = enchants.get(i);
 
-            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + 123 && mouseY < y + 14;
+            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH && mouseY < y + 14;
             if (!anyHovered) continue;
             boolean addDeleteHovered = mouseX < left + 12;
 
             if (enchant != null) {
-                boolean levelHovered = !addDeleteHovered && mouseX >= left + 103;
+                boolean levelHovered = !addDeleteHovered && mouseX >= left + LIST_WIDTH - 20;
 
                 if (addDeleteHovered) return () -> this.menu.removeEnchantment(enchant.getKey());
                 else if (levelHovered) return () -> {

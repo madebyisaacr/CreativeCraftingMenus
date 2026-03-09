@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class RenameMenuTab extends CreativeMenuTab<RenameMenuTab.RenameTabMenu> {
+    private static final int EDIT_BOX_LEFT = 32;
+    private static final int EDIT_BOX_WIDTH = 142;
+
     private @Nullable NameLoreEditBox nameLoreBox;
 
     public RenameMenuTab(Component displayName, Supplier<ItemStack> iconGenerator, String id) {
@@ -47,9 +50,9 @@ public class RenameMenuTab extends CreativeMenuTab<RenameMenuTab.RenameTabMenu> 
 
         this.nameLoreBox = new NameLoreEditBox(
                 screen.getFont(),
-                screen.leftPos + 51,
+                screen.leftPos + EDIT_BOX_LEFT,
                 screen.topPos + 14,
-                123,
+                EDIT_BOX_WIDTH,
                 56
         );
 
@@ -68,9 +71,9 @@ public class RenameMenuTab extends CreativeMenuTab<RenameMenuTab.RenameTabMenu> 
     public void render(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         if (this.menu == null) return;
 
-        int left = screen.leftPos + 51;
+        int left = screen.leftPos + EDIT_BOX_LEFT;
         int top = screen.topPos + 14;
-        int x = left + 113;
+        int x = left + EDIT_BOX_WIDTH - 11;
         int y = top - 11;
 
         boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + 11 && mouseY < y + 11;
@@ -102,9 +105,9 @@ public class RenameMenuTab extends CreativeMenuTab<RenameMenuTab.RenameTabMenu> 
     private @Nullable Runnable checkNameLoreClicked(MouseButtonEvent mouseButtonEvent) {
         if (this.menu == null || this.screen == null) return null;
 
-        int left = this.screen.leftPos + 51;
+        int left = this.screen.leftPos + EDIT_BOX_LEFT;
         int top = this.screen.topPos + 14;
-        int x = left + 113;
+        int x = left + EDIT_BOX_WIDTH - 11;
         int y = top - 11;
         double mouseX = mouseButtonEvent.x();
         double mouseY = mouseButtonEvent.y();
