@@ -45,6 +45,11 @@ public class CreativeMenuTabs {
                         SmithingMenuTab::new,
                         "smithing",
                         Items.SMITHING_TABLE::getDefaultInstance
+                ),
+                register(
+                        DecoratedPotsMenuTab::new,
+                        "decorated_pots",
+                        Items.DECORATED_POT::getDefaultInstance
                 )
         );
     }

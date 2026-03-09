@@ -40,12 +40,7 @@ public abstract class BannerPatternLayersMixin {
             target = "Lnet/minecraft/network/chat/MutableComponent;withStyle(Lnet/minecraft/ChatFormatting;)Lnet/minecraft/network/chat/MutableComponent;"
     ))
     private MutableComponent highlightUnfriendlyLines(MutableComponent instance, ChatFormatting chatFormatting, Operation<MutableComponent> original, @Local int i) {
-        return original.call(
-                instance,
-                (i >= 6 && ModConfig.HANDLER.instance().bannerTooltipChanges) ?
-                        ChatFormatting.RED :
-                        chatFormatting
-        );
+        return original.call(instance, chatFormatting);
     }
 
     @Inject(method = "addToTooltip", at = @At("TAIL"))

@@ -53,6 +53,7 @@ import java.util.List;
 public abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<CreativeModeInventoryScreen.@NotNull ItemPickerMenu> {
     @Unique private static final Identifier SELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_selected");
     @Unique private static final Identifier UNSELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_unselected");
+    @Unique private static final int COLUMN_TAB_COUNT = 4;
 
     public CreativeModeInventoryScreenMixin(CreativeModeInventoryScreen.ItemPickerMenu abstractContainerMenu, Inventory inventory, Component component) {
         super(abstractContainerMenu, inventory, component);
@@ -126,21 +127,38 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Inject(method = "getTabX", at = @At("HEAD"), cancellable = true)
     private void getMenuTabX(CreativeModeTab tab, CallbackInfoReturnable<Integer> cir) {
-        if (tab instanceof CreativeMenuTab)
-            cir.setReturnValue(this.imageWidth + ModConfig.HANDLER.instance().tabSpacingX);
+        if (tab instanceof CreativeMenuTab) {
+            int tabSpacingX = ModConfig.HANDLER.instance().tabSpacingX;
+            List<CreativeMenuTab<?>> filtered = CreativeMenuTabs.MENU_TABS.stream().filter(CreativeMenuTab::shouldDisplay).toList();
+            int index = filtered.indexOf(tab);
+
+            // First COLUMN_TAB_COUNT tabs on the left of the inventory, all others on the right
+            if (index >= 0 && index < COLUMN_TAB_COUNT) {
+                cir.setReturnValue(-26 - tabSpacingX);
+            } else {
+                cir.setReturnValue(this.imageWidth + tabSpacingX);
+            }
+        }
     }
 
     @Inject(method = "getTabY", at = @At("HEAD"), cancellable = true)
     private void getMenuTabY(CreativeModeTab tab, CallbackInfoReturnable<Integer> cir) {
         if (tab instanceof CreativeMenuTab) {
             int tabSpacingY = ModConfig.HANDLER.instance().tabSpacingY;
-            // TODO: Filter once every time the config changes instead of every damn time this method is called
             List<CreativeMenuTab<?>> filtered = CreativeMenuTabs.MENU_TABS.stream().filter(CreativeMenuTab::shouldDisplay).toList();
             int count = filtered.size();
             int index = filtered.indexOf(tab);
-            int size = (count - 1) * tabSpacingY + count * 26;
-            int top = (this.height - size) / 2;
-            cir.setReturnValue(top + index * (26 + tabSpacingY) - this.topPos);
+
+            if (index < 0) return;
+
+            int leftCount = Math.min(COLUMN_TAB_COUNT, count);
+            int rightCount = Math.max(0, count - leftCount);
+            int rows = Math.max(leftCount, rightCount);
+            int totalHeight = (rows - 1) * tabSpacingY + rows * 26;
+            int top = (this.height - totalHeight) / 2;
+
+            int rowIndex = index < leftCount ? index : index - leftCount;
+            cir.setReturnValue(top + rowIndex * (26 + tabSpacingY) - this.topPos);
         }
     }
 
@@ -181,7 +199,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
                     color
             );
             guiGraphics.drawString(font, this.playerInventoryTitle, 9, this.imageHeight - 94, color, bl);
-        } else original.call(guiGraphics, font, title, x, y, color, bl);
+        } else {
+            original.call(guiGraphics, font, title, x, y, color, bl);
+        }
     }
 
     @Inject(method = "renderBg", at = @At("TAIL"))
