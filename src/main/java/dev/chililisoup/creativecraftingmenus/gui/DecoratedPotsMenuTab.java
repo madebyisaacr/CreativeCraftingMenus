@@ -167,7 +167,12 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, SELECT_ALL_BUTTON_SIZE, SELECT_ALL_BUTTON_SIZE);
 
         if (hovered) {
-            guiGraphics.setComponentTooltipForNextFrame(screen.getFont(), List.of(Component.literal("All Sides")), (int) mouseX, (int) mouseY);
+            guiGraphics.setComponentTooltipForNextFrame(
+                    screen.getFont(),
+                    List.of(Component.translatable("container.creative_crafting_menus.decorated_pots.side.all")),
+                    (int) mouseX,
+                    (int) mouseY
+            );
         }
     }
 
