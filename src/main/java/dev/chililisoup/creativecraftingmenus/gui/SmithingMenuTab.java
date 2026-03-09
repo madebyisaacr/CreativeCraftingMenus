@@ -7,6 +7,7 @@ import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
 import dev.chililisoup.creativecraftingmenus.util.MenuHelper;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.client.Minecraft;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -271,7 +272,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
             return new Page.PageItem(
                     material == null ?
                             Component.translatable("gui.none") :
-                            material.value().description(),
+                            material.value().description().copy().withStyle(ChatFormatting.WHITE),
                     (guiGraphics, x, y) -> {
                         ItemStack itemStack = template.getSecond();
                         if (itemStack.isEmpty())
