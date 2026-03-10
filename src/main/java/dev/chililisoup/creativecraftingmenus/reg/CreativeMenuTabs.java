@@ -151,6 +151,13 @@ public class CreativeMenuTabs {
                     Component.translatable("creative_crafting_menus.item.filled_chiseled_bookshelf").withStyle(Style.EMPTY.withItalic(false)));
             entries.addAfter(Items.CHISELED_BOOKSHELF, List.of(filledChiseledBookshelf));
 
+            ItemStack filledComposter = new ItemStack(Items.COMPOSTER);
+            filledComposter.set(DataComponents.BLOCK_STATE,
+                    BlockItemStateProperties.EMPTY.with(BlockStateProperties.LEVEL_COMPOSTER, 8));
+            filledComposter.set(DataComponents.CUSTOM_NAME,
+                    Component.translatable("creative_crafting_menus.item.filled_composter").withStyle(Style.EMPTY.withItalic(false)));
+            entries.addAfter(Items.COMPOSTER, List.of(filledComposter));
+
             // Lit copper bulbs - all as a group after last unlit bulb
             entries.addAfter(Items.WAXED_OXIDIZED_COPPER_BULB, List.of(
                     createLitCopperBulbStack(Items.COPPER_BULB, "creative_crafting_menus.item.lit_copper_bulb"),
