@@ -41,6 +41,7 @@ import static net.minecraft.client.gui.screens.inventory.LoomScreen.*;
 public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.EnchantingTabMenu> {
     private static final int LIST_LEFT = 32;
     private static final int LIST_WIDTH = 133;
+    private static final int SELECTOR_WIDTH = LIST_WIDTH + 9;
 
     protected static final Identifier DELETE_BUTTON = CreativeCraftingMenus.id("widget/delete_button");
     protected static final Identifier DELETE_BUTTON_HIGHLIGHTED = CreativeCraftingMenus.id("widget/delete_button_highlighted");
@@ -51,6 +52,13 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
     private boolean scrolling;
     private int startIndex;
     private @Nullable DropdownSelector<Holder<Enchantment>> enchantSelector;
+
+    private static Component getEnchantmentLevelComponent(int level) {
+        if (level >= 1 && level <= 10) {
+            return Component.translatable("enchantment.level." + level);
+        }
+        return Component.literal(String.valueOf(level));
+    }
 
     public EnchantingMenuTab(Component displayName, Supplier<ItemStack> iconGenerator, String id) {
         super(displayName, iconGenerator, id);
@@ -94,7 +102,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                 screen.leftPos + LIST_LEFT + 12,
                 screen.leftPos + LIST_LEFT,
                 screen.topPos + 14,
-                LIST_WIDTH - 12,
+                SELECTOR_WIDTH - 12,
                 14,
                 56
         );
@@ -163,7 +171,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                     enchant.getKey().value().description() :
                     Component.translatable("container.creative_crafting_menus.enchanting.add_enchantment");
 
-            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH + 9 && mouseY < y + 14;
+            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + SELECTOR_WIDTH && mouseY < y + 14;
             boolean addDeleteHovered = anyHovered && mouseX < left + 12;
 
             if (enchant != null) {
@@ -180,14 +188,31 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                 boolean labelHovered = anyHovered && !addDeleteHovered && !upHovered && !downHovered &&
                         mouseX < left + LIST_WIDTH - 20;
 
+                Component tooltipLabel = label.copy().append(" ").append(getEnchantmentLevelComponent(level));
+
                 if (anyHovered) {
                     if (addDeleteHovered || upHovered || downHovered) guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
-                    if ((addDeleteHovered || labelHovered) && !upHovered && !downHovered)
+                    if (upHovered) {
                         guiGraphics.setTooltipForNextFrame(
-                                addDeleteHovered ? Component.translatable("container.creative_crafting_menus.enchanting.remove_enchantment") : label,
+                                Component.translatable("container.creative_crafting_menus.enchanting.increase_level"),
                                 mouseX,
                                 mouseY
                         );
+                    } else if (downHovered) {
+                        guiGraphics.setTooltipForNextFrame(
+                                Component.translatable("container.creative_crafting_menus.enchanting.decrease_level"),
+                                mouseX,
+                                mouseY
+                        );
+                    } else if (addDeleteHovered || labelHovered) {
+                        guiGraphics.setTooltipForNextFrame(
+                                addDeleteHovered
+                                        ? Component.translatable("container.creative_crafting_menus.enchanting.remove_enchantment")
+                                        : tooltipLabel,
+                                mouseX,
+                                mouseY
+                        );
+                    }
                 }
 
                 guiGraphics.blitSprite(
@@ -219,7 +244,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
 
                 guiGraphics.drawCenteredString(
                         Minecraft.getInstance().font,
-                        String.valueOf(level),
+                        getEnchantmentLevelComponent(level).getString(),
                         left + LIST_WIDTH - 10,
                         y + 3,
                         -1
@@ -274,7 +299,7 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
             int y = top + (i - this.startIndex) * 14;
             Object2IntMap.@Nullable Entry<Holder<Enchantment>> enchant = enchants.get(i);
 
-            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH + 9 && mouseY < y + 14;
+            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + SELECTOR_WIDTH && mouseY < y + 14;
             if (!anyHovered) continue;
             boolean addDeleteHovered = mouseX < left + 12;
 
@@ -332,14 +357,6 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
         if (mouseButtonEvent.x() >= x && mouseButtonEvent.x() < x + 12 && mouseButtonEvent.y() >= y && mouseButtonEvent.y() < y + 56)
             this.scrolling = true;
 
-        return checkEnchantmentsClicked(mouseButtonEvent) != null;
-    }
-
-    @Override
-    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
-        this.scrolling = false;
-        if (this.menu == null) return false;
-
         Runnable onClick = checkEnchantmentsClicked(mouseButtonEvent);
         if (onClick != null) {
             onClick.run();
@@ -347,6 +364,14 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
         }
 
         return false;
+    }
+
+    @Override
+    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
+        this.scrolling = false;
+        if (this.menu == null) return false;
+
+        return checkEnchantmentsClicked(mouseButtonEvent) != null;
     }
 
     @Override
