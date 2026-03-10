@@ -256,7 +256,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     }
 
     private ItemStack buildFireworkStack() {
-        IntList colors = new IntArrayList(new int[]{this.selectedColor.getTextureDiffuseColor()});
+        IntList colors = new IntArrayList(new int[]{this.selectedColor.getFireworkColor()});
         FireworkExplosion explosion = new FireworkExplosion(
                 this.selectedShape,
                 colors,
