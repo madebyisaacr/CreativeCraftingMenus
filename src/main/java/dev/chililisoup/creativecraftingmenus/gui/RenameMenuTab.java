@@ -39,6 +39,29 @@ public class RenameMenuTab extends CreativeMenuTab<RenameMenuTab.RenameTabMenu> 
     }
 
     @Override
+    public boolean keepInputOnTabSwitch() {
+        return true;
+    }
+
+    @Override
+    public ItemStack extractInputItem() {
+        if (this.menu == null) return ItemStack.EMPTY;
+        RenameTabMenu m = this.menu;
+        ItemStack stack = m.inputSlots.removeItemNoUpdate(0);
+        if (!stack.isEmpty()) m.slotsChanged(m.inputSlots);
+        return stack;
+    }
+
+    @Override
+    public boolean acceptInputItem(ItemStack stack) {
+        if (this.menu == null || stack.isEmpty()) return false;
+        RenameTabMenu m = this.menu;
+        m.inputSlots.setItem(0, stack.copy());
+        m.slotsChanged(m.inputSlots);
+        return true;
+    }
+
+    @Override
     RenameTabMenu createMenu(Player player) {
         return new RenameTabMenu(player);
     }

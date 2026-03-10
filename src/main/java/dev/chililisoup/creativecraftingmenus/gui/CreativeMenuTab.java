@@ -56,6 +56,41 @@ public abstract class CreativeMenuTab<M extends CreativeMenuTab.CreativeTabMenu<
 
     public void subInit() {}
 
+    /**
+     * Whether this tab participates in the shared-input behavior when
+     * switching between creative menu tabs. Tabs that return true here
+     * are considered to have an input slot whose contents can be carried
+     * over to another compatible tab.
+     */
+    public boolean keepInputOnTabSwitch() {
+        return false;
+    }
+
+    /**
+     * Extracts the current input item from this tab, if any. Implementations
+     * should remove the item from their input slot and update any dependent
+     * state, returning the removed stack. The default implementation has
+     * no input and returns {@link ItemStack#EMPTY}.
+     */
+    public ItemStack extractInputItem() {
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Attempts to accept the given stack as this tab's input item. If the
+     * stack is accepted into the tab's input slot, implementations should
+     * return {@code true}; otherwise, they should return {@code false}
+     * and leave the stack untouched.
+     */
+    public boolean acceptInputItem(ItemStack stack) {
+        return false;
+    }
+
+    /**
+     * Fully remove this tab, disposing its menu and returning any items
+     * according to the menu implementation. This is used when switching away
+     * from the tab or when the creative screen is closed.
+     */
     public void remove() {
         if (this.menu != null) {
             this.menu.removed(this.menu.player);

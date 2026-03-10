@@ -105,10 +105,27 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
         //if (this.minecraft == null) return;
 
         if (selectedTab == tab) return;
-        if (selectedTab instanceof CreativeMenuTab<?> oldTab)
+
+        ItemStack carriedInput = ItemStack.EMPTY;
+        if (selectedTab instanceof CreativeMenuTab<?> oldTab) {
+            if (oldTab.keepInputOnTabSwitch())
+                carriedInput = oldTab.extractInputItem();
             oldTab.remove();
-        if (this.listener != null && tab instanceof CreativeMenuTab<?> newTab)
+        }
+
+        if (this.listener != null && tab instanceof CreativeMenuTab<?> newTab) {
             newTab.init(this, this.minecraft.player);
+
+            if (!carriedInput.isEmpty() && newTab.keepInputOnTabSwitch()) {
+                if (!newTab.acceptInputItem(carriedInput) && this.minecraft != null && this.minecraft.player != null) {
+                    this.minecraft.player.getInventory().placeItemBackInInventory(carriedInput);
+                }
+            } else if (!carriedInput.isEmpty() && this.minecraft != null && this.minecraft.player != null) {
+                this.minecraft.player.getInventory().placeItemBackInInventory(carriedInput);
+            }
+        } else if (!carriedInput.isEmpty() && this.minecraft != null && this.minecraft.player != null) {
+            this.minecraft.player.getInventory().placeItemBackInInventory(carriedInput);
+        }
     }
 
     @Inject(method = "selectTab", at = @At("TAIL"))

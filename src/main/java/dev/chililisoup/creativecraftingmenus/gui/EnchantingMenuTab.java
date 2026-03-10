@@ -36,10 +36,11 @@ import java.util.function.Supplier;
 
 import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROLLER_DISABLED_SPRITE;
 import static net.minecraft.client.gui.screens.inventory.StonecutterScreen.SCROLLER_SPRITE;
+import static net.minecraft.client.gui.screens.inventory.LoomScreen.*;
 
 public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.EnchantingTabMenu> {
     private static final int LIST_LEFT = 32;
-    private static final int LIST_WIDTH = 142;
+    private static final int LIST_WIDTH = 133;
 
     protected static final Identifier DELETE_BUTTON = CreativeCraftingMenus.id("widget/delete_button");
     protected static final Identifier DELETE_BUTTON_HIGHLIGHTED = CreativeCraftingMenus.id("widget/delete_button_highlighted");
@@ -53,6 +54,29 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
 
     public EnchantingMenuTab(Component displayName, Supplier<ItemStack> iconGenerator, String id) {
         super(displayName, iconGenerator, id);
+    }
+
+    @Override
+    public boolean keepInputOnTabSwitch() {
+        return true;
+    }
+
+    @Override
+    public ItemStack extractInputItem() {
+        if (this.menu == null) return ItemStack.EMPTY;
+        EnchantingTabMenu m = this.menu;
+        ItemStack stack = m.inputSlots.removeItemNoUpdate(0);
+        if (!stack.isEmpty()) m.slotsChanged(m.inputSlots);
+        return stack;
+    }
+
+    @Override
+    public boolean acceptInputItem(ItemStack stack) {
+        if (this.menu == null || stack.isEmpty()) return false;
+        EnchantingTabMenu m = this.menu;
+        m.inputSlots.setItem(0, stack.copy());
+        m.slotsChanged(m.inputSlots);
+        return true;
     }
 
     @Override
@@ -74,6 +98,12 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
                 14,
                 56
         );
+        this.enchantSelector.setPlaceholder(Component.translatable(
+                "container.creative_crafting_menus.enchanting.add_enchantment"
+        ));
+        this.enchantSelector.setSelectionCallback(enchant -> {
+            if (this.menu != null) this.menu.addEnchantment(enchant);
+        });
         this.screen.addRenderableWidget(this.enchantSelector);
 
         this.update();
@@ -128,81 +158,100 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
         for (int i = this.startIndex; i < enchants.size() && i < 4 + this.startIndex; i++) {
             int y = top + (i - this.startIndex) * 14;
 
-                Object2IntMap.@Nullable Entry<Holder<Enchantment>> enchant = enchants.get(i);
-                Component label = enchant != null ?
-                        enchant.getKey().value().description() :
-                        Component.translatable("container.creative_crafting_menus.enchanting.add_enchantment");
+            Object2IntMap.@Nullable Entry<Holder<Enchantment>> enchant = enchants.get(i);
+            Component label = enchant != null ?
+                    enchant.getKey().value().description() :
+                    Component.translatable("container.creative_crafting_menus.enchanting.add_enchantment");
 
-                boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH && mouseY < y + 14;
-                boolean addDeleteHovered = anyHovered && mouseX < left + 12;
+            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH + 9 && mouseY < y + 14;
+            boolean addDeleteHovered = anyHovered && mouseX < left + 12;
 
-                if (enchant != null) {
-                    boolean labelHovered = anyHovered && !addDeleteHovered && mouseX < left + LIST_WIDTH - 20;
-                    boolean levelHovered = anyHovered && !addDeleteHovered && !labelHovered;
+            if (enchant != null) {
+                int level = enchant.getIntValue();
+                boolean upVisible = level < 255;
+                boolean downVisible = level > 1;
 
-                    if (anyHovered) {
-                        if (!labelHovered) guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
-                        if (!levelHovered) guiGraphics.setTooltipForNextFrame(
-                                labelHovered ? label : Component.translatable("container.creative_crafting_menus.enchanting.remove_enchantment"),
+                boolean upHovered = upVisible && !addDeleteHovered &&
+                        mouseX >= left + LIST_WIDTH && mouseX < left + LIST_WIDTH + 9 &&
+                        mouseY >= y && mouseY < y + 7;
+                boolean downHovered = downVisible && !addDeleteHovered &&
+                        mouseX >= left + LIST_WIDTH && mouseX < left + LIST_WIDTH + 9 &&
+                        mouseY >= y + 7 && mouseY < y + 14;
+                boolean labelHovered = anyHovered && !addDeleteHovered && !upHovered && !downHovered &&
+                        mouseX < left + LIST_WIDTH - 20;
+
+                if (anyHovered) {
+                    if (addDeleteHovered || upHovered || downHovered) guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+                    if ((addDeleteHovered || labelHovered) && !upHovered && !downHovered)
+                        guiGraphics.setTooltipForNextFrame(
+                                addDeleteHovered ? Component.translatable("container.creative_crafting_menus.enchanting.remove_enchantment") : label,
                                 mouseX,
                                 mouseY
                         );
-                    }
-
-                    guiGraphics.blitSprite(
-                            RenderPipelines.GUI_TEXTURED,
-                            addDeleteHovered ? DELETE_BUTTON_HIGHLIGHTED : DELETE_BUTTON,
-                            left,
-                            y,
-                            12,
-                            14
-                    );
-
-                    guiGraphics.blitSprite(
-                            RenderPipelines.GUI_TEXTURED,
-                            levelHovered ? BUTTON_HIGHLIGHTED : BUTTON,
-                            left + LIST_WIDTH - 20,
-                            y,
-                            20,
-                            14
-                    );
-
-                    guiGraphics.drawCenteredString(
-                            Minecraft.getInstance().font,
-                            String.valueOf(enchant.getIntValue()),
-                            left + LIST_WIDTH - 10,
-                            y + 3,
-                            -1
-                    );
-
-                    VersionHelper.drawScrollingString(
-                            guiGraphics,
-                            label,
-                            left + 15,
-                            left + 15,
-                            left + LIST_WIDTH - 23,
-                            y,
-                            y + 14
-                    );
-                } else {
-                    this.enchantSelector.visible = true;
-                    this.enchantSelector.setY(y);
-
-                    if (addDeleteHovered) {
-                        guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
-                        guiGraphics.setTooltipForNextFrame(label, mouseX, mouseY);
-                    }
-
-                    guiGraphics.blitSprite(
-                            RenderPipelines.GUI_TEXTURED,
-                            addDeleteHovered ? ADD_ENCHANTING_BUTTON_HIGHLIGHTED : ADD_ENCHANTING_BUTTON,
-                            left,
-                            y,
-                            12,
-                            14
-                    );
                 }
+
+                guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    addDeleteHovered ? DELETE_BUTTON_HIGHLIGHTED : DELETE_BUTTON,
+                    left,
+                    y,
+                    12,
+                    14
+                );
+
+                if (upVisible) guiGraphics.blitSprite(
+                        RenderPipelines.GUI_TEXTURED,
+                        upHovered ? ARROW_UP_HIGHLIGHTED : ARROW_UP,
+                        left + LIST_WIDTH,
+                        y + 1,
+                        9,
+                        6
+                );
+
+                if (downVisible) guiGraphics.blitSprite(
+                        RenderPipelines.GUI_TEXTURED,
+                        downHovered ? ARROW_DOWN_HIGHLIGHTED : ARROW_DOWN,
+                        left + LIST_WIDTH,
+                        y + 7,
+                        9,
+                        6
+                );
+
+                guiGraphics.drawCenteredString(
+                        Minecraft.getInstance().font,
+                        String.valueOf(level),
+                        left + LIST_WIDTH - 10,
+                        y + 3,
+                        -1
+                );
+
+                VersionHelper.drawScrollingString(
+                        guiGraphics,
+                        label,
+                        left + 15,
+                        left + 15,
+                        left + LIST_WIDTH - 23,
+                        y,
+                        y + 14
+                );
+            } else {
+                this.enchantSelector.visible = true;
+                this.enchantSelector.setY(y);
+
+                if (anyHovered) {
+                    guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+                }
+
+                guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    addDeleteHovered ? ADD_ENCHANTING_BUTTON_HIGHLIGHTED : ADD_ENCHANTING_BUTTON,
+                    left,
+                    y,
+                    12,
+                    14
+                );
             }
+        }
     }
 
     private @Nullable Runnable checkEnchantmentsClicked(MouseButtonEvent mouseButtonEvent) {
@@ -225,21 +274,38 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
             int y = top + (i - this.startIndex) * 14;
             Object2IntMap.@Nullable Entry<Holder<Enchantment>> enchant = enchants.get(i);
 
-            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH && mouseY < y + 14;
+            boolean anyHovered = mouseX >= left && mouseY >= y && mouseX < left + LIST_WIDTH + 9 && mouseY < y + 14;
             if (!anyHovered) continue;
             boolean addDeleteHovered = mouseX < left + 12;
 
             if (enchant != null) {
-                boolean levelHovered = !addDeleteHovered && mouseX >= left + LIST_WIDTH - 20;
+                int level = enchant.getIntValue();
+                boolean upVisible = level < 255;
+                boolean downVisible = level > 1;
+
+                boolean upHovered = upVisible && !addDeleteHovered &&
+                        mouseX >= left + LIST_WIDTH && mouseX < left + LIST_WIDTH + 9 &&
+                        mouseY >= y && mouseY < y + 7;
+                boolean downHovered = downVisible && !addDeleteHovered &&
+                        mouseX >= left + LIST_WIDTH && mouseX < left + LIST_WIDTH + 9 &&
+                        mouseY >= y + 7 && mouseY < y + 14;
 
                 if (addDeleteHovered) return () -> this.menu.removeEnchantment(enchant.getKey());
-                else if (levelHovered) return () -> {
-                    int change = (mouseButtonEvent.button() == 1 ? -1 : 1) * (mouseButtonEvent.hasShiftDown() ? 10 : 1);
-                    this.menu.setEnchantment(enchant.getKey(), Math.max(enchant.getIntValue() + change, 1));
+                else if (upHovered) return () -> {
+                    int change = mouseButtonEvent.hasShiftDown() ? 10 : 1;
+                    int newLevel = Mth.clamp(enchant.getIntValue() + change, 1, 255);
+                    this.menu.setEnchantment(enchant.getKey(), newLevel);
                 };
-            } else if (addDeleteHovered) return () -> {
-                Holder<Enchantment> selected = this.enchantSelector.value();
-                if (selected != null) this.menu.addEnchantment(selected);
+                else if (downHovered) return () -> {
+                    int change = mouseButtonEvent.hasShiftDown() ? 10 : 1;
+                    int newLevel = Mth.clamp(enchant.getIntValue() - change, 1, 255);
+                    this.menu.setEnchantment(enchant.getKey(), newLevel);
+                };
+            } else if (anyHovered) return () -> {
+                if (this.enchantSelector != null) {
+                    this.enchantSelector.open = true;
+                    this.enchantSelector.setScrollAmount(0.0);
+                }
             };
         }
 

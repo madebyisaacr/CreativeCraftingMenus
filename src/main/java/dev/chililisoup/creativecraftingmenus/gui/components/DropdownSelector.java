@@ -15,12 +15,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.Entry<T>> {
     private final int closedHeight;
     private final int openHeight;
     private final int openX;
     private final int openY;
+    private @Nullable Component placeholder;
+    private @Nullable Consumer<T> selectionCallback;
     public boolean open = false;
 
     public DropdownSelector(int x, int openX, int openY, int width, int closedHeight, int openHeight) {
@@ -32,9 +35,16 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
         this.setX(x);
     }
 
+    public void setPlaceholder(@Nullable Component placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public void setSelectionCallback(@Nullable Consumer<T> selectionCallback) {
+        this.selectionCallback = selectionCallback;
+    }
+
     public void updateEntries(Collection<Entry<T>> entries) {
         this.replaceEntries(List.copyOf(entries));
-        super.setSelected(this.children().stream().findFirst().orElse(null));
         this.setHeight(this.openHeight);
         this.setScrollAmount(0.0);
     }
@@ -46,10 +56,13 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
 
     @Override
     public void setSelected(DropdownSelector.Entry<T> entry) {
+        boolean wasOpen = this.open;
         this.open = false;
         this.playDownSound(this.minecraft.getSoundManager());
-        if (this.getSelected() == entry) return;
         super.setSelected(entry);
+        if (wasOpen && this.selectionCallback != null && entry != null) {
+            this.selectionCallback.accept(entry.value);
+        }
     }
 
     @Override
@@ -99,9 +112,10 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
             }
 
             Entry<T> selected = this.getSelected();
-            if (selected != null) VersionHelper.drawScrollingString(
+            Component toRender = this.placeholder != null ? this.placeholder : (selected != null ? selected.name : null);
+            if (toRender != null) VersionHelper.drawScrollingString(
                     guiGraphics,
-                    selected.name,
+                    toRender,
                     this.getX() + 3,
                     this.getX() + 3,
                     this.getRight() - 3,
