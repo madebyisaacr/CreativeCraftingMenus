@@ -1,6 +1,4 @@
-<p align="center"><img src="./src/main/resources/icon.png" alt="Creative Crafting Menus Logo" /></p>
-
-<h1 align="center">Extended Creative Menus</h1>
+# Extended Creative Menus
 
 Adds 6 new menus to the creative inventory:
 * **Rename** - rename items and add colors and formatting to item names.
@@ -13,15 +11,13 @@ Adds 6 new menus to the creative inventory:
 <hr>
 
 Adds more items to the creative inventory to make building easier:
-- **Lit Copper Lamps**
-- **Unlit Campfire & Soul Campfire**
-- **Ominous Vault & Trial Spanwer**
-- **Filled Chiseled Bookshelf**
-- **Filled Composter**
+- Lit Copper Lamps
+- Unlit Campfire & Soul Campfire
+- Ominous Vault & Trial Spanwer
+- Filled Chiseled Bookshelf
+- Filled Composter
 
 <img width="400px" src="/assets/creative_items.png" />
-
-<hr>
 
 ## Vanilla Minecraft compatible
 This mod is client-side only. It's fully compatible with vanilla Minecraft servers, and you can join other people's worlds who don't have this mod installed.
