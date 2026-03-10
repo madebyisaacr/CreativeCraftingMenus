@@ -3,7 +3,7 @@ package dev.chililisoup.creativecraftingmenus.gui;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.config.BannerPresets;
-import dev.chililisoup.creativecraftingmenus.config.ModConfig;
+import dev.chililisoup.creativecraftingmenus.gui.components.DyesGrid;
 import dev.chililisoup.creativecraftingmenus.util.ServerResourceProvider;
 import dev.chililisoup.creativecraftingmenus.util.VersionHelper;
 import net.minecraft.client.Minecraft;
@@ -53,13 +53,6 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
     protected static final Identifier ADD_GROUP_BUTTON = CreativeCraftingMenus.id("widget/add_group_button");
     protected static final Identifier ADD_GROUP_BUTTON_HIGHLIGHTED = CreativeCraftingMenus.id("widget/add_group_button_highlighted");
     protected static final Identifier LAYERS_ICON = CreativeCraftingMenus.id("icon/layers_icon");
-
-    private static final DyeColor[] COLORS = {
-            DyeColor.WHITE, DyeColor.LIGHT_GRAY, DyeColor.GRAY,    DyeColor.BLACK,
-            DyeColor.BROWN, DyeColor.RED,        DyeColor.ORANGE,  DyeColor.YELLOW,
-            DyeColor.LIME,  DyeColor.GREEN,      DyeColor.CYAN,    DyeColor.LIGHT_BLUE,
-            DyeColor.BLUE,  DyeColor.PURPLE,     DyeColor.MAGENTA, DyeColor.PINK
-    };
 
     private final ArrayList<Holder.Reference<@NotNull BannerPattern>> patterns = new ArrayList<>();
     private Page.RenderFunction pageRenderer = Page.RenderFunction.EMPTY;
@@ -197,7 +190,9 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
         this.renderButtons(screen, guiGraphics, mouseX, mouseY);
         this.renderPageContents(screen, guiGraphics, mouseX, mouseY);
 
-        if (this.selectedPage != Page.PRESETS) this.renderDyes(screen, guiGraphics, mouseX, mouseY);
+        if (this.selectedPage != Page.PRESETS)
+            DyesGrid.renderDyes(guiGraphics, screen.leftPos + 100, screen.topPos + 21, mouseX, mouseY,
+                    this.menu.getColors().get(this.selectedLayer + 1));
         else this.renderSecondaryPresetsPageContents(screen, guiGraphics, mouseX, mouseY);
     }
 
@@ -212,16 +207,6 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
         guiGraphics.fill(0, 0, 5, 10, DyeColor.GRAY.getTextureDiffuseColor());
         guiGraphics.blit(textureAtlasSprite.atlasLocation(), 0, 0, 5, 10, u0, u1, v0, v1);
         guiGraphics.pose().popMatrix();
-    }
-
-    private void renderDyeIcon(GuiGraphics guiGraphics, DyeColor color, int x, int y) {
-        if (ModConfig.HANDLER.instance().dyeItemColorIcons) {
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(x + 1, y);
-            guiGraphics.pose().scale(3F / 4F);
-            guiGraphics.renderItem(DyeItem.byColor(color).getDefaultInstance(), 0, 0);
-            guiGraphics.pose().popMatrix();
-        } else guiGraphics.fill(x + 2, y + 2, x + 12, y + 12, color.getTextureDiffuseColor());
     }
 
     private void renderScrollBar(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -286,40 +271,6 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
                     18,
                     11
             );
-        }
-    }
-
-    private void renderDyes(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        if (this.menu == null) return;
-
-        DyeColor dyeColor = this.menu.getColors().get(this.selectedLayer + 1);
-
-        int left = screen.leftPos + 100;
-        int top = screen.topPos + 21;
-
-        for (int i = 0; i < COLORS.length; i++) {
-            int x = left + (i % 4) * 14;
-            int y = top + (i / 4) * 14;
-
-            DyeColor color = COLORS[i];
-            boolean selected = dyeColor == color;
-            boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + 14 && mouseY < y + 14;
-
-            if (hovered) {
-                if (!selected) guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
-                guiGraphics.setTooltipForNextFrame(DyeItem.byColor(color).getName(), mouseX, mouseY);
-            }
-
-            guiGraphics.blitSprite(
-                    RenderPipelines.GUI_TEXTURED,
-                    selected ? BUTTON_SELECTED : (hovered ? BUTTON_HIGHLIGHTED : BUTTON),
-                    x,
-                    y,
-                    14,
-                    14
-            );
-
-            this.renderDyeIcon(guiGraphics, color, x, y);
         }
     }
 
@@ -452,7 +403,7 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
                 guiGraphics.drawString(Minecraft.getInstance().font, (i > 0) ? String.valueOf(i) : "-", left + 3, y + 3, 0xFFFFFFFF);
                 instance.renderBannerOnButton(guiGraphics, left + 14, y, guiGraphics.getSprite(Sheets.getBannerMaterial(pattern)));
-                instance.renderDyeIcon(guiGraphics, dyeColor, left + 28, y);
+                DyesGrid.renderDyeIcon(guiGraphics, dyeColor, left + 28, y);
             }
         };
     }
@@ -755,22 +706,13 @@ public class LoomMenuTab extends CreativeMenuTab<LoomMenuTab.LoomTabMenu> {
 
     private @Nullable DyeColor checkDyeClicked(double mouseX, double mouseY) {
         if (this.screen == null || this.menu == null) return null;
-
-        DyeColor dyeColor = this.menu.getColors().get(this.selectedLayer + 1);
-        int left = this.screen.leftPos + 100;
-        int top = this.screen.topPos + 21;
-
-        for (int i = 0; i < COLORS.length; i++) {
-            DyeColor color = COLORS[i];
-            if (dyeColor == color) continue;
-
-            int x = left + (i % 4) * 14;
-            int y = top + (i / 4) * 14;
-            if (mouseX >= x && mouseY >= y && mouseX < x + 14 && mouseY < y + 14)
-                return color;
-        }
-
-        return null;
+        return DyesGrid.getClickedDye(
+                this.screen.leftPos + 100,
+                this.screen.topPos + 21,
+                mouseX,
+                mouseY,
+                this.menu.getColors().get(this.selectedLayer + 1)
+        );
     }
 
     private @Nullable Page checkPageClicked(double mouseX, double mouseY) {

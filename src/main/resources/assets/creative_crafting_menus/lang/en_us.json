@@ -1,15 +1,19 @@
 {
+  "container.creative_crafting_menus.rename": "Rename",
+  "container.creative_crafting_menus.rename.name_lore.help.1": "Use Text Placeholder API",
+  "container.creative_crafting_menus.rename.name_lore.help.2": "to add formatting.",
+
   "container.creative_crafting_menus.crafting": "Crafting",
+
+  "container.creative_crafting_menus.enchanting": "Enchanting",
+  "container.creative_crafting_menus.enchanting.add_enchantment": "Add Enchantment",
+  "container.creative_crafting_menus.enchanting.remove_enchantment": "Remove Enchantment",
+
   "container.creative_crafting_menus.smithing": "Smithing",
-  "container.creative_crafting_menus.decorated_pots": "Decorated Pot",
-  "container.creative_crafting_menus.decorated_pots.side.front": "Front",
-  "container.creative_crafting_menus.decorated_pots.side.left": "Left",
-  "container.creative_crafting_menus.decorated_pots.side.right": "Right",
-  "container.creative_crafting_menus.decorated_pots.side.back": "Back",
-  "container.creative_crafting_menus.decorated_pots.side.all": "Select All",
   "container.creative_crafting_menus.smithing.trim_pattern": "Trim Pattern",
   "container.creative_crafting_menus.smithing.trim_material": "Trim Material",
   "container.creative_crafting_menus.smithing.item_material": "Item Material",
+
   "container.creative_crafting_menus.loom": "Banners",
   "container.creative_crafting_menus.loom.pattern": "Pattern",
   "container.creative_crafting_menus.loom.layers": "Layers",
@@ -29,12 +33,16 @@
   "container.creative_crafting_menus.loom.preset_group.numbers": "Numbers",
   "container.creative_crafting_menus.loom.preset_group.symbols": "Symbols",
   "container.creative_crafting_menus.loom.preset_group.arrows": "Arrows",
-  "container.creative_crafting_menus.rename": "Rename",
-  "container.creative_crafting_menus.rename.name_lore.help.1": "Use Text Placeholder API",
-  "container.creative_crafting_menus.rename.name_lore.help.2": "to add formatting.",
-  "container.creative_crafting_menus.enchanting": "Enchanting",
-  "container.creative_crafting_menus.enchanting.add_enchantment": "Add Enchantment",
-  "container.creative_crafting_menus.enchanting.remove_enchantment": "Remove Enchantment",
+
+  "container.creative_crafting_menus.decorated_pots": "Decorated Pot",
+  "container.creative_crafting_menus.decorated_pots.side.front": "Front",
+  "container.creative_crafting_menus.decorated_pots.side.left": "Left",
+  "container.creative_crafting_menus.decorated_pots.side.right": "Right",
+  "container.creative_crafting_menus.decorated_pots.side.back": "Back",
+  "container.creative_crafting_menus.decorated_pots.side.all": "Select All",
+
+  "container.creative_crafting_menus.fireworks": "Fireworks",
+  "container.creative_crafting_menus.fireworks.no_effect": "No Effect",
 
   "creative_crafting_menus.item.unlit_campfire": "Unlit Campfire",
   "creative_crafting_menus.item.unlit_soul_campfire": "Unlit Soul Campfire",
