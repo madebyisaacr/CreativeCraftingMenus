@@ -19,7 +19,7 @@ Adds more items to the creative inventory to make building easier:
 - **Filled Chiseled Bookshelf**
 - **Filled Composter**
 
-<img src="/assets/creative_items.png" />
+<img width="400px" src="/assets/creative_items.png" />
 
 <hr>
 
