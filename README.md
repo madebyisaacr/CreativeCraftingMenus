@@ -13,11 +13,13 @@ Adds 6 new menus to the creative inventory:
 <hr>
 
 Adds more items to the creative inventory to make building easier:
-- **Lit Copper Lamps** - pre-lit versions of all copper lamps.
-- **Unlit Campfire & Soul Campfire** - place unlit campfires without having to manually put the fire out.
-- **Ominous Vault & Trial Spanwer** - the ominous variants of the Vault and Trial Spawner which are only accessible with commands.s
-- **Filled Chiseled Bookshelf** - a chiseled bookshelf with all 6 books.
-- **Filled Composter** - a composter filled to the max level.
+- **Lit Copper Lamps**
+- **Unlit Campfire & Soul Campfire**
+- **Ominous Vault & Trial Spanwer**
+- **Filled Chiseled Bookshelf**
+- **Filled Composter**
+
+<img src="/assets/creative_items.png" />
 
 <hr>
 
