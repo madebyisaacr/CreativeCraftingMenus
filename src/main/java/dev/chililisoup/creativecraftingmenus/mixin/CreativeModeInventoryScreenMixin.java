@@ -139,6 +139,14 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Inject(method = "removed", at = @At("TAIL"))
     private void cleanup(CallbackInfo ci) {
+        if (selectedTab instanceof CreativeMenuTab<?> menuTab && this.minecraft != null && this.minecraft.player != null) {
+            ItemStack carried = ItemStack.EMPTY;
+            if (menuTab.keepInputOnTabSwitch())
+                carried = menuTab.extractInputItem();
+            menuTab.remove();
+            if (!carried.isEmpty())
+                this.minecraft.player.getInventory().placeItemBackInInventory(carried);
+        }
         this.resetHeight();
     }
 
