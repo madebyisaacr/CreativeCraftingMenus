@@ -12,55 +12,6 @@
 				"block_state_property": "level",
 				"cases": [
 					{
-						"when": "1",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents1"
-						}
-					},
-					{
-						"when": "2",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents2"
-						}
-					},
-					{
-						"when": "3",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents3"
-						}
-					},
-					{
-						"when": "4",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents4"
-						}
-					},
-					{
-						"when": "5",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents5"
-						}
-					},
-					{
-						"when": "6",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents6"
-						}
-					},
-					{
-						"when": "7",
-						"model": {
-							"type": "minecraft:model",
-							"model": "minecraft:block/composter_contents7"
-						}
-					},
-					{
 						"when": "8",
 						"model": {
 							"type": "minecraft:model",
