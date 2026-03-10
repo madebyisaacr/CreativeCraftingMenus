@@ -53,7 +53,7 @@ import java.util.List;
 public abstract class CreativeModeInventoryScreenMixin extends AbstractContainerScreen<CreativeModeInventoryScreen.@NotNull ItemPickerMenu> {
     @Unique private static final Identifier SELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_selected");
     @Unique private static final Identifier UNSELECTED_MENU_TAB = CreativeCraftingMenus.id("container/creative_menu_tab_unselected");
-    @Unique private static final int COLUMN_TAB_COUNT = 4;
+    @Unique private static final int COLUMN_TAB_COUNT = 3;
 
     public CreativeModeInventoryScreenMixin(CreativeModeInventoryScreen.ItemPickerMenu abstractContainerMenu, Inventory inventory, Component component) {
         super(abstractContainerMenu, inventory, component);
