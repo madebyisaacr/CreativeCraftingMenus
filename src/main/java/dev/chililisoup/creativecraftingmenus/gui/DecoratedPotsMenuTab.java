@@ -217,7 +217,9 @@ public class DecoratedPotsMenuTab extends CreativeMenuTab<DecoratedPotsMenuTab.D
                 );
             } else if (hovered) {
                 guiGraphics.fill(vx, vy, vx + SLOT_VISUAL_SIZE, vy + SLOT_VISUAL_SIZE, 0xFFC0C0C0);  // hover: #C0C0C0
+            }
 
+            if (hovered) {
                 List<Component> tooltip = new ArrayList<>();
                 tooltip.add(Component.translatable(SLOT_KEYS[i]));
                 Item sherd = this.slotSherds[i];

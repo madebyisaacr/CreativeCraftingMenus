@@ -31,11 +31,11 @@ public class CreativeMenuTabs {
                         "rename",
                         Items.NAME_TAG::getDefaultInstance
                 ),
-                register(
-                        CraftingMenuTab::new,
-                        "crafting",
-                        Items.CRAFTING_TABLE::getDefaultInstance
-                ),
+                // register(
+                //         CraftingMenuTab::new,
+                //         "crafting",
+                //         Items.CRAFTING_TABLE::getDefaultInstance
+                // ),
                 register(
                         EnchantingMenuTab::new,
                         "enchanting",
