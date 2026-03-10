@@ -1,16 +1,25 @@
 <p align="center"><img src="./src/main/resources/icon.png" alt="Creative Crafting Menus Logo" /></p>
 
-<h1 align="center">Creative Crafting Menus</h1>
+<h1 align="center">Extended Creative Menus</h1>
 
-Adds several crafting menus to the creative inventory, each designed for ease of use in creative mode. Also adds* a 2x2 crafting grid to the creative mode survival inventory
-
-<sub>*It was always in the game, just moved 2000 pixels up and to the left from the screen, lol. The mod just moves it back.</sub>
+Adds 6 new menus to the creative inventory:
+* **Rename** - rename items and add colors and formatting to item names.
+* **Enchanting** - add enchantments to your tools, weapons, and armor.
+* **Smithing** - customize armor trims.
+* **Banners** - create and edit banners, and find presets for letters, numbers, and more.
+* **Decorated Pots** - customize decorated pots with patterns on each side.
+* **Fireworks** - create fireworks with customizable shapes, effects, and colors.
 
 <hr>
 
-<h3 align="center">Downloads</h3>
+Adds more items to the creative inventory to make building easier:
+- **Lit Copper Lamps** - pre-lit versions of all copper lamps.
+- **Unlit Campfire & Soul Campfire** - place unlit campfires without having to manually put the fire out.
+- **Ominous Vault & Trial Spanwer** - the ominous variants of the Vault and Trial Spawner which are only accessible with commands.s
+- **Filled Chiseled Bookshelf** - a chiseled bookshelf with all 6 books.
+- **Filled Composter** - a composter filled to the max level.
 
-<p align="center">
- <a href="https://modrinth.com/mod/creativecraftingmenus"><img src="https://img.shields.io/badge/Modrinth-00AF5C?style=for-the-badge&logo=modrinth&labelColor=16181C" alt="Modrinth downloads"></a>
- <a href="https://curseforge.com/minecraft/mc-mods/creative-crafting-menus"><img src="https://img.shields.io/badge/CurseForge-F16436?style=for-the-badge&logo=curseforge&labelColor=0D0D0D" alt="CurseForge downloads"></a>
-</p>
+<hr>
+
+## Vanilla Minecraft compatible
+This mod is client-side only. It's fully compatible with vanilla Minecraft servers, and you can join other people's worlds who don't have this mod installed.
