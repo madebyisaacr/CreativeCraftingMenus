@@ -447,9 +447,6 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
 
         List<DropdownSelector.Entry<Holder<Enchantment>>> all = new ArrayList<>();
         if (!compatible.isEmpty()) {
-            all.add(DropdownSelector.Entry.heading(
-                    Component.translatable("container.creative_crafting_menus.enchanting.compatible_heading",
-                            resultStack.getHoverName()).withStyle(ChatFormatting.GRAY)));
             all.addAll(compatible);
             if (!incompatible.isEmpty()) {
                 all.add(DropdownSelector.Entry.heading(
