@@ -231,10 +231,10 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
         public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
             if (hovered) {
                 guiGraphics.fill(
-                        this.getContentX(),
-                        this.getContentY(),
-                        this.getContentRight(),
-                        this.getContentBottom(),
+                        this.getContentX() - 3,
+                        this.getContentY() - 2,
+                        this.getContentRight() + 3,
+                        this.getContentBottom() + 2,
                         0x40FFFFFF
                 );
                 guiGraphics.requestCursor(CursorTypes.POINTING_HAND);

@@ -427,15 +427,27 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
             return;
 
         this.startIndex = (int) (this.scrollOffs * this.getOffscreenRows() + 0.5);
+        ItemStack resultStack = this.menu.resultSlots.getItem(0);
         this.enchantSelector.updateEntries(
-                ServerResourceProvider.getRegistryElements(Registries.ENCHANTMENT).stream().filter(enchant ->
-                        !this.menu.hasEnchantment(enchant)
-                ).map(enchant ->
-                        new DropdownSelector.Entry<>(enchant.value().description(), (Holder<Enchantment>) enchant)
-                ).toList()
+                ServerResourceProvider.getRegistryElements(Registries.ENCHANTMENT).stream()
+                        .filter(enchant -> !this.menu.hasEnchantment(enchant))
+                        .filter(enchant -> !resultStack.isEmpty() && enchant.value().canEnchant(resultStack))
+                        .filter(enchant -> isCompatibleWithExisting(enchant, resultStack))
+                        .map(enchant ->
+                                new DropdownSelector.Entry<>(enchant.value().description(), (Holder<Enchantment>) enchant)
+                        ).toList()
         );
         this.enchantSelector.visible = false;
         this.enchantSelector.open = false;
+    }
+
+    private boolean isCompatibleWithExisting(Holder<Enchantment> candidate, ItemStack stack) {
+        ItemEnchantments existing = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : existing.entrySet()) {
+            if (!Enchantment.areCompatible(candidate, entry.getKey()))
+                return false;
+        }
+        return true;
     }
 
     public class EnchantingTabMenu extends CreativeMenuTab.CreativeTabMenu<EnchantingTabMenu> {
