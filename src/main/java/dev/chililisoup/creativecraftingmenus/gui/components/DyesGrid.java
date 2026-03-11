@@ -11,6 +11,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 /**
  * Reusable dyes grid component for menu tabs. Renders a 4x4 grid of dye colors with
  * hover, tooltip, and click handling.
@@ -49,12 +51,33 @@ public class DyesGrid {
             int mouseY,
             DyeColor selected
     ) {
+        renderDyes(guiGraphics, left, top, mouseX, mouseY, selected == null ? null : java.util.List.of(selected));
+    }
+
+    /**
+     * Renders the dyes grid with support for multiple selected colors.
+     *
+     * @param guiGraphics the graphics context
+     * @param left        left edge of the grid
+     * @param top         top edge of the grid
+     * @param mouseX      mouse X position
+     * @param mouseY      mouse Y position
+     * @param selected    collection of selected dye colors (may be null for none)
+     */
+    public static void renderDyes(
+            GuiGraphics guiGraphics,
+            int left,
+            int top,
+            int mouseX,
+            int mouseY,
+            @Nullable Collection<DyeColor> selected
+    ) {
         for (int i = 0; i < COLORS.length; i++) {
             int x = left + (i % COLUMNS) * CELL_SIZE;
             int y = top + (i / COLUMNS) * CELL_SIZE;
 
             DyeColor color = COLORS[i];
-            boolean selectedState = selected == color;
+            boolean selectedState = selected != null && selected.contains(color);
             boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + CELL_SIZE && mouseY < y + CELL_SIZE;
 
             if (hovered) {
@@ -100,6 +123,29 @@ public class DyesGrid {
         for (int i = 0; i < COLORS.length; i++) {
             DyeColor color = COLORS[i];
             if (selected == color) continue;
+
+            int x = left + (i % COLUMNS) * CELL_SIZE;
+            int y = top + (i / COLUMNS) * CELL_SIZE;
+            if (mouseX >= x && mouseY >= y && mouseX < x + CELL_SIZE && mouseY < y + CELL_SIZE)
+                return color;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the dye color at the given mouse position, regardless of current selection.
+     * Useful for callers that handle their own selection state (including multi-select).
+     */
+    @Nullable
+    public static DyeColor getClickedDye(
+            int left,
+            int top,
+            double mouseX,
+            double mouseY
+    ) {
+        for (int i = 0; i < COLORS.length; i++) {
+            DyeColor color = COLORS[i];
 
             int x = left + (i % COLUMNS) * CELL_SIZE;
             int y = top + (i / COLUMNS) * CELL_SIZE;

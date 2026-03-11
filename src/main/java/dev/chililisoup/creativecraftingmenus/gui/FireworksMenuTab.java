@@ -23,6 +23,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -36,6 +37,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     private static final int BUTTON_SIZE = 18;
 
     private static final FireworkExplosion.Shape[] SHAPES = FireworkExplosion.Shape.values();
+    private static final int MAX_COLORS = 8;
     private static final Item[] SHAPE_ICONS = {
             Items.FIREWORK_STAR, // SMALL_BALL
             Items.FIRE_CHARGE,  // LARGE_BALL
@@ -44,7 +46,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
             Items.FEATHER,      // BURST
     };
 
-    private DyeColor selectedColor = DyeColor.WHITE;
+    private final List<DyeColor> selectedColors = new ArrayList<>();
     private int duration = 0;
     private FireworkExplosion.Shape selectedShape = FireworkExplosion.Shape.SMALL_BALL;
     private boolean twinkle = false;
@@ -52,6 +54,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
 
     public FireworksMenuTab(Component displayName, Supplier<ItemStack> iconGenerator, String id) {
         super(displayName, iconGenerator, id);
+        this.selectedColors.add(DyeColor.WHITE);
     }
 
     @Override
@@ -64,7 +67,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
         if (this.screen == null) return;
         int left = this.screen.leftPos + DYES_GRID_LEFT;
         int top = this.screen.topPos + DYES_GRID_TOP;
-        DyesGrid.renderDyes(guiGraphics, left, top, mouseX, mouseY, this.selectedColor);
+        DyesGrid.renderDyes(guiGraphics, left, top, mouseX, mouseY, this.selectedColors);
 
         int durationLeft = this.screen.leftPos + DURATION_BUTTONS_LEFT;
         int controlsTop = this.screen.topPos + CONTROLS_TOP;
@@ -161,8 +164,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
                 this.screen.leftPos + DYES_GRID_LEFT,
                 this.screen.topPos + DYES_GRID_TOP,
                 mouseButtonEvent.x(),
-                mouseButtonEvent.y(),
-                this.selectedColor
+                mouseButtonEvent.y()
         ) != null || getClickedDurationButton(mouseButtonEvent.x(), mouseButtonEvent.y()) >= 0
                 || getClickedShape(mouseButtonEvent.x(), mouseButtonEvent.y()) != null
                 || getClickedEffectsButton(mouseButtonEvent.x(), mouseButtonEvent.y()) >= 0;
@@ -175,11 +177,19 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
                 this.screen.leftPos + DYES_GRID_LEFT,
                 this.screen.topPos + DYES_GRID_TOP,
                 mouseButtonEvent.x(),
-                mouseButtonEvent.y(),
-                this.selectedColor
+                mouseButtonEvent.y()
         );
         if (clicked != null) {
-            this.selectedColor = clicked;
+            if (this.selectedColors.contains(clicked)) {
+                this.selectedColors.remove(clicked);
+                if (this.selectedColors.isEmpty()) {
+                    this.selectedColors.add(DyeColor.WHITE);
+                }
+            } else {
+                if (this.selectedColors.size() < MAX_COLORS) {
+                    this.selectedColors.add(clicked);
+                }
+            }
             this.updateFireworkSlot();
             return true;
         }
@@ -256,7 +266,14 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     }
 
     private ItemStack buildFireworkStack() {
-        IntList colors = new IntArrayList(new int[]{this.selectedColor.getFireworkColor()});
+        IntList colors = new IntArrayList();
+        if (this.selectedColors.isEmpty()) {
+            colors.add(DyeColor.WHITE.getFireworkColor());
+        } else {
+            for (int i = 0; i < this.selectedColors.size() && i < MAX_COLORS; i++) {
+                colors.add(this.selectedColors.get(i).getFireworkColor());
+            }
+        }
         FireworkExplosion explosion = new FireworkExplosion(
                 this.selectedShape,
                 colors,
