@@ -46,6 +46,9 @@
 
   "container.creative_crafting_menus.fireworks": "Fireworks",
   "container.creative_crafting_menus.fireworks.no_effect": "No Effect",
+  "container.creative_crafting_menus.fireworks.single_color": "Single Color",
+  "container.creative_crafting_menus.fireworks.multiple_colors": "Multiple Colors",
+  "container.creative_crafting_menus.fireworks.multiple_colors_limit": "Up to %s",
 
   "creative_crafting_menus.item.unlit_campfire": "Unlit Campfire",
   "creative_crafting_menus.item.unlit_soul_campfire": "Unlit Soul Campfire",

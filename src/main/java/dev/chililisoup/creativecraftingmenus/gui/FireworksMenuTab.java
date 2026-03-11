@@ -1,17 +1,20 @@
 package dev.chililisoup.creativecraftingmenus.gui;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.gui.components.DyesGrid;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +32,7 @@ import java.util.function.Supplier;
 
 public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.FireworksTabMenu> {
     private static final int DYES_GRID_LEFT = 99;
-    private static final int DYES_GRID_TOP = 16;
+    private static final int DYES_GRID_TOP = 21;
     private static final int DURATION_BUTTONS_LEFT = 8;
     private static final int SHAPE_GRID_LEFT = 32;
     private static final int EFFECTS_BUTTONS_LEFT = 74;
@@ -38,6 +41,13 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
 
     private static final FireworkExplosion.Shape[] SHAPES = FireworkExplosion.Shape.values();
     private static final int MAX_COLORS = 8;
+    private static final Identifier SELECT_MULTIPLE_BUTTON = CreativeCraftingMenus.id("widget/select_multiple_button");
+    private static final Identifier SELECT_MULTIPLE_BUTTON_HOVERED = CreativeCraftingMenus.id("widget/select_multiple_button_hovered");
+    private static final Identifier SELECT_MULTIPLE_BUTTON_HIGHLIGHTED = CreativeCraftingMenus.id("widget/select_multiple_button_highlighted");
+    private static final int SELECT_MULTIPLE_BUTTON_X = 98;
+    private static final int SELECT_MULTIPLE_BUTTON_Y = 8;
+    private static final int SELECT_MULTIPLE_BUTTON_WIDTH = 29;
+    private static final int SELECT_MULTIPLE_BUTTON_HEIGHT = 11;
     private static final Item[] SHAPE_ICONS = {
             Items.FIREWORK_STAR, // SMALL_BALL
             Items.FIRE_CHARGE,  // LARGE_BALL
@@ -47,6 +57,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     };
 
     private final List<DyeColor> selectedColors = new ArrayList<>();
+    private boolean multiColorMode = false;
     private int duration = 0;
     private FireworkExplosion.Shape selectedShape = FireworkExplosion.Shape.SMALL_BALL;
     private boolean twinkle = false;
@@ -68,6 +79,8 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
         int left = this.screen.leftPos + DYES_GRID_LEFT;
         int top = this.screen.topPos + DYES_GRID_TOP;
         DyesGrid.renderDyes(guiGraphics, left, top, mouseX, mouseY, this.selectedColors);
+
+        this.renderSelectMultipleButton(screen, guiGraphics, mouseX, mouseY);
 
         int durationLeft = this.screen.leftPos + DURATION_BUTTONS_LEFT;
         int controlsTop = this.screen.topPos + CONTROLS_TOP;
@@ -160,6 +173,12 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent) {
         if (this.screen == null) return false;
+        if (this.isSelectMultipleButtonClicked(mouseButtonEvent.x(), mouseButtonEvent.y())) {
+            this.toggleMultiColorMode();
+            this.updateFireworkSlot();
+            return true;
+        }
+
         return DyesGrid.getClickedDye(
                 this.screen.leftPos + DYES_GRID_LEFT,
                 this.screen.topPos + DYES_GRID_TOP,
@@ -173,6 +192,11 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     @Override
     public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
         if (this.screen == null) return false;
+        if (this.isSelectMultipleButtonClicked(mouseButtonEvent.x(), mouseButtonEvent.y())) {
+            // Already handled in mouseClicked, but consume the release as well.
+            return true;
+        }
+
         DyeColor clicked = DyesGrid.getClickedDye(
                 this.screen.leftPos + DYES_GRID_LEFT,
                 this.screen.topPos + DYES_GRID_TOP,
@@ -180,16 +204,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
                 mouseButtonEvent.y()
         );
         if (clicked != null) {
-            if (this.selectedColors.contains(clicked)) {
-                this.selectedColors.remove(clicked);
-                if (this.selectedColors.isEmpty()) {
-                    this.selectedColors.add(DyeColor.WHITE);
-                }
-            } else {
-                if (this.selectedColors.size() < MAX_COLORS) {
-                    this.selectedColors.add(clicked);
-                }
-            }
+            this.handleColorClick(clicked);
             this.updateFireworkSlot();
             return true;
         }
@@ -270,7 +285,8 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
         if (this.selectedColors.isEmpty()) {
             colors.add(DyeColor.WHITE.getFireworkColor());
         } else {
-            for (int i = 0; i < this.selectedColors.size() && i < MAX_COLORS; i++) {
+            int max = this.multiColorMode ? MAX_COLORS : 1;
+            for (int i = 0; i < this.selectedColors.size() && i < max; i++) {
                 colors.add(this.selectedColors.get(i).getFireworkColor());
             }
         }
@@ -290,6 +306,82 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     private void updateFireworkSlot() {
         if (this.menu != null) {
             this.menu.setFireworkResult(this.buildFireworkStack());
+        }
+    }
+
+    private void renderSelectMultipleButton(AbstractContainerScreen<?> screen, GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int x = screen.leftPos + SELECT_MULTIPLE_BUTTON_X;
+        int y = screen.topPos + SELECT_MULTIPLE_BUTTON_Y;
+        boolean hovered = mouseX >= x && mouseY >= y && mouseX < x + SELECT_MULTIPLE_BUTTON_WIDTH && mouseY < y + SELECT_MULTIPLE_BUTTON_HEIGHT;
+
+        Identifier sprite = this.multiColorMode ? SELECT_MULTIPLE_BUTTON_HIGHLIGHTED
+                : (hovered ? SELECT_MULTIPLE_BUTTON_HOVERED : SELECT_MULTIPLE_BUTTON);
+
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                sprite,
+                x,
+                y,
+                SELECT_MULTIPLE_BUTTON_WIDTH,
+                SELECT_MULTIPLE_BUTTON_HEIGHT
+        );
+
+        if (hovered) {
+            guiGraphics.requestCursor(CursorTypes.POINTING_HAND);
+            if (this.multiColorMode) {
+                guiGraphics.setComponentTooltipForNextFrame(
+                        screen.getFont(),
+                        java.util.List.of(
+                                Component.translatable("container.creative_crafting_menus.fireworks.multiple_colors"),
+                                Component.translatable("container.creative_crafting_menus.fireworks.multiple_colors_limit", MAX_COLORS)
+                                        .copy()
+                                        .withStyle(ChatFormatting.GRAY)
+                        ),
+                        mouseX,
+                        mouseY
+                );
+            } else {
+                guiGraphics.setComponentTooltipForNextFrame(
+                        screen.getFont(),
+                        java.util.List.of(
+                                Component.translatable("container.creative_crafting_menus.fireworks.single_color")
+                        ),
+                        mouseX,
+                        mouseY
+                );
+            }
+        }
+    }
+
+    private boolean isSelectMultipleButtonClicked(double mouseX, double mouseY) {
+        if (this.screen == null) return false;
+        int x = this.screen.leftPos + SELECT_MULTIPLE_BUTTON_X;
+        int y = this.screen.topPos + SELECT_MULTIPLE_BUTTON_Y;
+        return mouseX >= x && mouseY >= y && mouseX < x + SELECT_MULTIPLE_BUTTON_WIDTH && mouseY < y + SELECT_MULTIPLE_BUTTON_HEIGHT;
+    }
+
+    private void toggleMultiColorMode() {
+        this.multiColorMode = !this.multiColorMode;
+        if (!this.multiColorMode && this.selectedColors.size() > 1) {
+            DyeColor first = this.selectedColors.getFirst();
+            this.selectedColors.clear();
+            this.selectedColors.add(first);
+        }
+    }
+
+    private void handleColorClick(DyeColor clicked) {
+        if (this.multiColorMode) {
+            if (this.selectedColors.contains(clicked)) {
+                this.selectedColors.remove(clicked);
+                if (this.selectedColors.isEmpty()) {
+                    this.selectedColors.add(DyeColor.WHITE);
+                }
+            } else if (this.selectedColors.size() < MAX_COLORS) {
+                this.selectedColors.add(clicked);
+            }
+        } else {
+            this.selectedColors.clear();
+            this.selectedColors.add(clicked);
         }
     }
 
