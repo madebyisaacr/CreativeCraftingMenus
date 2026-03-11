@@ -16,6 +16,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -27,6 +28,7 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -428,17 +430,49 @@ public class EnchantingMenuTab extends CreativeMenuTab<EnchantingMenuTab.Enchant
 
         this.startIndex = (int) (this.scrollOffs * this.getOffscreenRows() + 0.5);
         ItemStack resultStack = this.menu.resultSlots.getItem(0);
-        this.enchantSelector.updateEntries(
-                ServerResourceProvider.getRegistryElements(Registries.ENCHANTMENT).stream()
-                        .filter(enchant -> !this.menu.hasEnchantment(enchant))
-                        .filter(enchant -> !resultStack.isEmpty() && enchant.value().canEnchant(resultStack))
-                        .filter(enchant -> isCompatibleWithExisting(enchant, resultStack))
-                        .map(enchant ->
-                                new DropdownSelector.Entry<>(enchant.value().description(), (Holder<Enchantment>) enchant)
-                        ).toList()
-        );
+        List<Holder<Enchantment>> available = ServerResourceProvider.getRegistryElements(Registries.ENCHANTMENT).stream()
+                .filter(enchant -> !this.menu.hasEnchantment(enchant))
+                .<Holder<Enchantment>>map(e -> e)
+                .toList();
+
+        List<DropdownSelector.Entry<Holder<Enchantment>>> compatible = new ArrayList<>();
+        List<DropdownSelector.Entry<Holder<Enchantment>>> incompatible = new ArrayList<>();
+        for (Holder<Enchantment> enchant : available) {
+            DropdownSelector.Entry<Holder<Enchantment>> entry = new DropdownSelector.Entry<>(
+                    enchant.value().description(), (Holder<Enchantment>) enchant);
+            boolean valid = isEnchantmentValidForItem(enchant, resultStack);
+            if (valid) compatible.add(entry);
+            else incompatible.add(entry);
+        }
+
+        List<DropdownSelector.Entry<Holder<Enchantment>>> all = new ArrayList<>();
+        if (!compatible.isEmpty()) {
+            all.add(DropdownSelector.Entry.heading(
+                    Component.translatable("container.creative_crafting_menus.enchanting.compatible_heading",
+                            resultStack.getHoverName()).withStyle(ChatFormatting.GRAY)));
+            all.addAll(compatible);
+            if (!incompatible.isEmpty()) {
+                all.add(DropdownSelector.Entry.heading(
+                        Component.translatable("container.creative_crafting_menus.enchanting.other_heading").withStyle(ChatFormatting.GRAY)));
+                all.addAll(incompatible);
+            }
+        } else {
+            all.addAll(incompatible);
+        }
+        this.enchantSelector.updateEntries(all);
         this.enchantSelector.visible = false;
         this.enchantSelector.open = false;
+    }
+
+    private boolean isEnchantmentValidForItem(Holder<Enchantment> enchant, ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        // Use Minecraft API: must be applicable to the item and compatible with existing enchantments
+        if (enchant.value().canEnchant(stack) && isCompatibleWithExisting(enchant, stack))
+            return true;
+        // Special case: stick can have Knockback
+        if (stack.is(Items.STICK) && enchant.is(Enchantments.KNOCKBACK) && isCompatibleWithExisting(enchant, stack))
+            return true;
+        return false;
     }
 
     private boolean isCompatibleWithExisting(Holder<Enchantment> candidate, ItemStack stack) {

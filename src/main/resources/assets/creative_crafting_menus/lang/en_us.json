@@ -10,6 +10,8 @@
   "container.creative_crafting_menus.enchanting.remove_enchantment": "Remove Enchantment",
   "container.creative_crafting_menus.enchanting.increase_level": "Increase Level",
   "container.creative_crafting_menus.enchanting.decrease_level": "Decrease Level",
+  "container.creative_crafting_menus.enchanting.compatible_heading": "%s",
+  "container.creative_crafting_menus.enchanting.other_heading": "Other Enchantments",
 
   "container.creative_crafting_menus.smithing": "Smithing",
   "container.creative_crafting_menus.smithing.trim_pattern": "Trim Pattern",

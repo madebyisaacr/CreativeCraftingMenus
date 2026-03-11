@@ -56,6 +56,9 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
 
     @Override
     public void setSelected(DropdownSelector.Entry<T> entry) {
+        if (entry != null && entry.isHeading) {
+            return;
+        }
         boolean wasOpen = this.open;
         this.open = false;
         this.playDownSound(this.minecraft.getSoundManager());
@@ -216,20 +219,30 @@ public class DropdownSelector<T> extends ObjectSelectionList<DropdownSelector.En
     public static class Entry<T> extends ObjectSelectionList.Entry<DropdownSelector.Entry<T>> {
         final Component name;
         final T value;
+        final boolean isHeading;
 
         public Entry(final Component name, final T value) {
+            this(name, value, false);
+        }
+
+        public Entry(final Component name, final T value, final boolean isHeading) {
             this.name = name;
             this.value = value;
+            this.isHeading = isHeading;
+        }
+
+        public static <T> Entry<T> heading(final Component name) {
+            return new Entry<>(name, null, true);
         }
 
         @Override
         public @NotNull Component getNarration() {
-            return Component.translatable("narrator.select", this.name);
+            return this.isHeading ? this.name : Component.translatable("narrator.select", this.name);
         }
 
         @Override
         public void renderContent(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
-            if (hovered) {
+            if (!this.isHeading && hovered) {
                 guiGraphics.fill(
                         this.getContentX() - 3,
                         this.getContentY() - 2,
