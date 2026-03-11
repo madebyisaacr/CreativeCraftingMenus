@@ -16,6 +16,7 @@ Adds more items to the creative inventory to make building easier:
 - Ominous Vault & Trial Spanwer
 - Filled Chiseled Bookshelf
 - Filled Composter
+- Earth, Wind, Fire, and Water paintings - these hidden paintings were only available in the operator tab before.
 
 <img width="400px" src="/assets/creative_items.png" />
 
