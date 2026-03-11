@@ -288,7 +288,7 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
         FireworksTabMenu(Player player, FireworksMenuTab tab) {
             super(player);
             this.tab = tab;
-            this.addSlot(new Slot(this.fireworkSlot, 0, 166, 33) {
+            this.addSlot(new Slot(this.fireworkSlot, 0, 167, 34) {
                 @Override
                 public boolean mayPlace(@NotNull ItemStack stack) {
                     return false;
