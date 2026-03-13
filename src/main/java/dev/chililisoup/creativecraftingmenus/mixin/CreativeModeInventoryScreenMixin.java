@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.chililisoup.creativecraftingmenus.CreativeCraftingMenus;
 import dev.chililisoup.creativecraftingmenus.config.ModConfig;
 import dev.chililisoup.creativecraftingmenus.gui.CreativeMenuTab;
+import dev.chililisoup.creativecraftingmenus.gui.LoomMenuTab;
 import dev.chililisoup.creativecraftingmenus.reg.CreativeMenuTabs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -223,7 +224,8 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
                     y,
                     color
             );
-            guiGraphics.drawString(font, this.playerInventoryTitle, 9, this.imageHeight - 94, color, bl);
+            if (!(selectedTab instanceof LoomMenuTab))
+                guiGraphics.drawString(font, this.playerInventoryTitle, 9, this.imageHeight - 94, color, bl);
         } else {
             original.call(guiGraphics, font, title, x, y, color, bl);
         }
@@ -391,7 +393,9 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     private int positionMenuTabInventorySlots(NonNullList<?> instance, Operation<Integer> original, @Local AbstractContainerMenu abstractContainerMenu) {
         if (!(selectedTab instanceof CreativeMenuTab)) return original.call(instance);
 
-        for (int i = 9; i < 45; i++) {
+        // Loom tab: only hotbar; other menu tabs: full inventory
+        int start = selectedTab instanceof LoomMenuTab ? 36 : 9;
+        for (int i = start; i < 45; i++) {
             CreativeModeInventoryScreen.SlotWrapper wrapped = new CreativeModeInventoryScreen.SlotWrapper(
                     abstractContainerMenu.slots.get(i),
                     i,
