@@ -83,6 +83,8 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private final ArmorStandRenderState armorStandPreview = new ArmorStandRenderState();
     private final ArrayList<Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack>> trimPatterns = new ArrayList<>();
     private final ArrayList<Pair<Holder.@Nullable Reference<@NotNull TrimMaterial>, ItemStack>> trimMaterials = new ArrayList<>();
+    private @Nullable Holder<@NotNull TrimPattern> selectedTrimPattern;
+    private @Nullable Holder<@NotNull TrimMaterial> selectedTrimMaterial;
     private List<Page.PageItem> pageContents = List.of();
     private Page selectedPage = Page.TRIM_PATTERN;
     private float scrollOffs;
@@ -266,6 +268,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private static List<Page.PageItem> getTrimPatternPageContents(SmithingMenuTab instance) {
         if (instance.menu == null) return List.of();
         ArmorTrim trim = instance.menu.getSlot(1).getItem().get(DataComponents.TRIM);
+        @Nullable Holder<@NotNull TrimPattern> activePattern = trim != null ? trim.pattern() : instance.selectedTrimPattern;
 
         return instance.trimPatterns.stream().map(template -> {
             @Nullable Holder<@NotNull TrimPattern> pattern = template.getFirst();
@@ -279,9 +282,9 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
                             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, PLACEHOLDER_TRIM, x, y, 16, 16);
                         else guiGraphics.renderItem(itemStack, x, y);
                     },
-                    trim == null ?
+                    activePattern == null ?
                             pattern == null :
-                            trim.pattern() == template.getFirst()
+                            pattern != null && activePattern.equals(pattern)
             );
         }).toList();
     }
@@ -289,6 +292,7 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private static List<Page.PageItem> getTrimMaterialPageContents(SmithingMenuTab instance) {
         if (instance.menu == null) return List.of();
         ArmorTrim trim = instance.menu.getSlot(1).getItem().get(DataComponents.TRIM);
+        @Nullable Holder<@NotNull TrimMaterial> activeMaterial = trim != null ? trim.material() : instance.selectedTrimMaterial;
 
         return instance.trimMaterials.stream().map(template -> {
             @Nullable Holder<@NotNull TrimMaterial> material = template.getFirst();
@@ -302,9 +306,9 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
                             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, PLACEHOLDER_TRIM, x, y, 16, 16);
                         else guiGraphics.renderItem(itemStack, x, y);
                     },
-                    trim == null ?
+                    activeMaterial == null ?
                             material == null :
-                            material != null && trim.material().value() == material.value()
+                            material != null && activeMaterial.equals(material)
             );
         }).toList();
     }
@@ -467,8 +471,9 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     private ItemStack getTrimPatternTabIcon() {
         if (this.menu == null) return Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance();
         ArmorTrim trim = this.menu.getSlot(1).getItem().get(DataComponents.TRIM);
-        if (trim == null) return Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance();
-        TrimPattern patternValue = trim.pattern().value();
+        @Nullable Holder<@NotNull TrimPattern> patternHolder = trim != null ? trim.pattern() : this.selectedTrimPattern;
+        if (patternHolder == null) return Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE.getDefaultInstance();
+        TrimPattern patternValue = patternHolder.value();
         for (Pair<Holder.@Nullable Reference<@NotNull TrimPattern>, ItemStack> pair : this.trimPatterns) {
             if (pair.getFirst() != null && pair.getFirst().value() == patternValue) {
                 ItemStack icon = pair.getSecond();
@@ -479,17 +484,18 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     }
 
     private ItemStack getTrimMaterialTabIcon() {
-        if (this.menu == null) return Items.IRON_INGOT.getDefaultInstance();
+        if (this.menu == null) return Items.AMETHYST_SHARD.getDefaultInstance();
         ArmorTrim trim = this.menu.getSlot(1).getItem().get(DataComponents.TRIM);
-        TrimMaterial materialValue = trim != null ? trim.material().value() : null;
-        if (materialValue == null) return Items.IRON_INGOT.getDefaultInstance();
+        @Nullable Holder<@NotNull TrimMaterial> materialHolder = trim != null ? trim.material() : this.selectedTrimMaterial;
+        TrimMaterial materialValue = materialHolder != null ? materialHolder.value() : null;
+        if (materialValue == null) return Items.AMETHYST_SHARD.getDefaultInstance();
         for (Pair<Holder.@Nullable Reference<@NotNull TrimMaterial>, ItemStack> pair : this.trimMaterials) {
             if (pair.getFirst() != null && pair.getFirst().value() == materialValue) {
                 ItemStack icon = pair.getSecond();
-                return icon.isEmpty() ? Items.IRON_INGOT.getDefaultInstance() : icon;
+                return icon.isEmpty() ? Items.AMETHYST_SHARD.getDefaultInstance() : icon;
             }
         }
-        return Items.IRON_INGOT.getDefaultInstance();
+        return Items.AMETHYST_SHARD.getDefaultInstance();
     }
 
     private boolean isScrollBarActive() {
@@ -539,6 +545,8 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
     public void dispose() {
         this.trimPatterns.clear();
         this.trimMaterials.clear();
+        this.selectedTrimPattern = null;
+        this.selectedTrimMaterial = null;
         this.selectedPage = Page.TRIM_PATTERN;
         this.pageContents = List.of();
         this.scrollOffs = 0F;
@@ -695,17 +703,24 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         }
 
         private void setTrimPattern(@Nullable Holder<@NotNull TrimPattern> pattern) {
+            SmithingMenuTab.this.selectedTrimPattern = pattern;
             ItemStack result = this.resultSlots.getItem(0);
-            if (result.isEmpty()) return;
+            if (!SmithingMenuTab.this.canHaveArmorTrim(result) || result.isEmpty()) {
+                SmithingMenuTab.this.updateItem(result);
+                return;
+            }
 
-            if (pattern == null) result.remove(DataComponents.TRIM);
-            else {
+            Holder<@NotNull TrimMaterial> material = SmithingMenuTab.this.selectedTrimMaterial;
+            if (material == null) {
                 ArmorTrim armorTrim = this.getArmorTrim();
-
-                Holder<@NotNull TrimMaterial> material = armorTrim == null ?
+                material = armorTrim == null ?
                         ServerResourceProvider.getRegistryElements(Registries.TRIM_MATERIAL).getFirst() :
                         armorTrim.material();
+            }
 
+            if (pattern == null || material == null) {
+                result.remove(DataComponents.TRIM);
+            } else {
                 result.applyComponents(DataComponentMap.builder().set(
                         DataComponents.TRIM,
                         new ArmorTrim(material, pattern)
@@ -716,17 +731,24 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         }
 
         private void setTrimMaterial(@Nullable Holder<@NotNull TrimMaterial> material) {
+            SmithingMenuTab.this.selectedTrimMaterial = material;
             ItemStack result = this.resultSlots.getItem(0);
-            if (result.isEmpty()) return;
+            if (!SmithingMenuTab.this.canHaveArmorTrim(result) || result.isEmpty()) {
+                SmithingMenuTab.this.updateItem(result);
+                return;
+            }
 
-            if (material == null) result.remove(DataComponents.TRIM);
-            else {
+            Holder<@NotNull TrimPattern> pattern = SmithingMenuTab.this.selectedTrimPattern;
+            if (pattern == null) {
                 ArmorTrim armorTrim = this.getArmorTrim();
-
-                Holder<@NotNull TrimPattern> pattern = armorTrim == null ?
+                pattern = armorTrim == null ?
                         ServerResourceProvider.getRegistryElements(Registries.TRIM_PATTERN).getFirst() :
                         armorTrim.pattern();
+            }
 
+            if (material == null || pattern == null) {
+                result.remove(DataComponents.TRIM);
+            } else {
                 result.applyComponents(DataComponentMap.builder().set(
                         DataComponents.TRIM,
                         new ArmorTrim(material, pattern)
@@ -751,6 +773,36 @@ public class SmithingMenuTab extends CreativeMenuTab<SmithingMenuTab.SmithingTab
         public void slotsChanged(@NotNull Container container) {
             if (container == this.inputSlots) {
                 ItemStack result = this.inputSlots.getItem(0).copy();
+                if (SmithingMenuTab.this.canHaveArmorTrim(result) && !result.isEmpty()) {
+                    ArmorTrim armorTrim = result.get(DataComponents.TRIM);
+                    if (armorTrim != null) {
+                        // Input item already has a trim: overwrite the selected values
+                        SmithingMenuTab.this.selectedTrimPattern = armorTrim.pattern();
+                        SmithingMenuTab.this.selectedTrimMaterial = armorTrim.material();
+                    } else {
+                        // Input item has no trim: optionally apply the currently selected trim
+                        Holder<@NotNull TrimPattern> pattern = SmithingMenuTab.this.selectedTrimPattern;
+                        Holder<@NotNull TrimMaterial> material = SmithingMenuTab.this.selectedTrimMaterial;
+
+                        if (pattern != null || material != null) {
+                            if (pattern == null) {
+                                List<Holder.Reference<TrimPattern>> patterns = ServerResourceProvider.getRegistryElements(Registries.TRIM_PATTERN);
+                                if (!patterns.isEmpty()) pattern = patterns.getFirst();
+                            }
+                            if (material == null) {
+                                List<Holder.Reference<TrimMaterial>> materials = ServerResourceProvider.getRegistryElements(Registries.TRIM_MATERIAL);
+                                if (!materials.isEmpty()) material = materials.getFirst();
+                            }
+
+                            if (pattern != null && material != null) {
+                                result.applyComponents(DataComponentMap.builder().set(
+                                        DataComponents.TRIM,
+                                        new ArmorTrim(material, pattern)
+                                ).build());
+                            }
+                        }
+                    }
+                }
                 this.resultSlots.setItem(0, result);
                 SmithingMenuTab.this.updateItem(result);
             } else if (container == this.resultSlots) {

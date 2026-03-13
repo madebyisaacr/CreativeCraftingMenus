@@ -49,11 +49,11 @@ public class FireworksMenuTab extends CreativeMenuTab<FireworksMenuTab.Fireworks
     private static final int SELECT_MULTIPLE_BUTTON_WIDTH = 29;
     private static final int SELECT_MULTIPLE_BUTTON_HEIGHT = 11;
     private static final Item[] SHAPE_ICONS = {
-            Items.FIREWORK_STAR, // SMALL_BALL
-            Items.FIRE_CHARGE,  // LARGE_BALL
-            Items.GOLD_NUGGET,  // STAR
+            Items.FIREWORK_STAR,   // SMALL_BALL
+            Items.FIRE_CHARGE,    // LARGE_BALL
+            Items.GOLD_NUGGET,   // STAR
             Items.CREEPER_HEAD, // CREEPER
-            Items.FEATHER,      // BURST
+            Items.FEATHER,     // BURST
     };
 
     private final List<DyeColor> selectedColors = new ArrayList<>();
